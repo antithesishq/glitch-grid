@@ -1,0 +1,111 @@
+name: Continous Integration (Go Services)
+
+on: 
+   workflow_dispatch:
+   schedule:
+     - cron: "5 1 * * *"
+
+jobs:
+  antithesis:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        # These secrets would need to be populated in your repo and named
+        # this way if you want to copy-and-paste this configuration.
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PAT }}
+
+    # Extract the metadata (tags) for all the containers
+    - name: Extract metadata (tags) for Docker workload
+      id: meta-workload
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-workload
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Go config
+      id: meta-go-config
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-go-config
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Go control
+      id: meta-go-control
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-go-control
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Go vault
+      id: meta-go-vault
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-go-vault
+        tags: |
+          type=sha
+          antithesis
+
+    # Now build and push each of the containers.
+    - name: Build and push workload
+      id: build-push-go-workload
+      uses: docker/build-push-action@v5
+      with:
+        context: ./workload
+        file: ./workload/Dockerfile.workload
+        push: true
+        tags: ${{ steps.meta-workload.outputs.tags }}
+        labels: ${{ steps.meta-workload.outputs.labels }}
+    - name: Build and push Go config
+      id: build-push-go-config
+      uses: docker/build-push-action@v5
+      with:
+        context: ./go
+        file: ./go/Dockerfile.config
+        push: true
+        tags: ${{ steps.meta-go-config.outputs.tags }}
+        labels: ${{ steps.meta-go-config.outputs.labels }}
+    - name: Build and push Go control
+      id: build-push-go-control
+      uses: docker/build-push-action@v5
+      with:
+        context: ./go
+        file: ./go/Dockerfile.control
+        push: true
+        tags: ${{ steps.meta-go-control.outputs.tags }}
+        labels: ${{ steps.meta-go-control.outputs.labels }}
+    - name: Build and push Go vault
+      id: build-push-go-vault
+      uses: docker/build-push-action@v5
+      with:
+        context: ./go
+        file: ./go/Dockerfile.vault
+        push: true
+        tags: ${{ steps.meta-go-vault.outputs.tags }}
+        labels: ${{ steps.meta-go-vault.outputs.labels }}
+
+    # Run Antithesis Tests
+    - name: Run Antithesis Tests
+      uses: antithesishq/antithesis-trigger-action@main
+      with:
+        notebook_name: demo_go
+        tenant: demo
+        username: ${{ secrets.ANTITHESIS_USERNAME }}
+        password: ${{ secrets.ANTITHESIS_PASSWORD }}
+        github_token: ${{ secrets.GH_PAT }}
+        images: demo-go-config=${{ steps.build-push-go-config.outputs.digest }};demo-workload=${{ steps.build-push-go-workload.outputs.digest }};demo-go-control=${{ steps.build-push-go-control.outputs.digest }};demo-go-vault=${{ steps.build-push-go-vault.outputs.digest }};

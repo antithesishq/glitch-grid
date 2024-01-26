@@ -1,0 +1,13 @@
+# Use a recent version of the vanilla Python images from dockerhub
+FROM docker.io/library/python:3.11
+LABEL maintainer="Antithesis <support@antithesis.com>"
+
+# Add our source code.
+# Add common.py first, so both this and the vault images can use the same base container image layer.
+ADD common.py .
+ADD control.py .
+
+# Define the entrypoint.
+# Make sure to use the array version of this specification, so other command-line
+# arguments and parameters can be specified in the Dockerfile.
+ENTRYPOINT [ "python", "./control.py" ]

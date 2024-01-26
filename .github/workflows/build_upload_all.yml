@@ -1,0 +1,145 @@
+name: Build & Upload All
+
+on: [workflow_dispatch]
+
+jobs:
+  antithesis:
+    runs-on: ubuntu-latest
+
+    permissions:
+      contents: read
+      packages: write
+
+    steps:
+    - uses: actions/checkout@v4
+
+    - name: Set up Docker Buildx
+      uses: docker/setup-buildx-action@v3
+
+    - name: Login to Docker Hub
+      uses: docker/login-action@v3
+      with:
+        # These secrets would need to be populated in your repo and named
+        # this way if you want to copy-and-paste this configuration.
+        username: ${{ secrets.DOCKER_USERNAME }}
+        password: ${{ secrets.DOCKER_PAT }}
+
+    # There is a lot of copy-and-paste in these sections.
+    # This could be streamlined by using a matrix configuration, which would
+    # parameterize the extract and build stages. However, it would run both the
+    # setup and teardown sections N times, once for each of the N containers we
+    # are going to build and deploy.
+    - name: Extract metadata (tags) for Docker workload
+      id: meta-workload
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-workload
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Go config
+      id: meta-go-config
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-go-config
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Go control
+      id: meta-go-control
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-go-control
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Go vault
+      id: meta-go-vault
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-go-vault
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Python config
+      id: meta-py-config
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-py-config
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Python control
+      id: meta-py-control
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-py-control
+        tags: |
+          type=sha
+          antithesis
+    - name: Extract metadata (tags) for Docker Python vault
+      id: meta-py-vault
+      uses: docker/metadata-action@v4
+      with:
+        images: antithesishq/demo-py-vault
+        tags: |
+          type=sha
+          antithesis
+
+    # Now build and push each of the containers.
+    - name: Build and push workload
+      uses: docker/build-push-action@v5
+      with:
+        context: ./workload
+        file: ./workload/Dockerfile.workload
+        push: true
+        tags: ${{ steps.meta-workload.outputs.tags }}
+        labels: ${{ steps.meta-workload.outputs.labels }}
+    - name: Build and push Go config
+      uses: docker/build-push-action@v5
+      with:
+        context: ./go
+        file: ./go/Dockerfile.config
+        push: true
+        tags: ${{ steps.meta-go-config.outputs.tags }}
+        labels: ${{ steps.meta-go-config.outputs.labels }}
+    - name: Build and push Go control
+      uses: docker/build-push-action@v5
+      with:
+        context: ./go
+        file: ./go/Dockerfile.control
+        push: true
+        tags: ${{ steps.meta-go-control.outputs.tags }}
+        labels: ${{ steps.meta-go-control.outputs.labels }}
+    - name: Build and push Go vault
+      uses: docker/build-push-action@v5
+      with:
+        context: ./go
+        file: ./go/Dockerfile.vault
+        push: true
+        tags: ${{ steps.meta-go-vault.outputs.tags }}
+        labels: ${{ steps.meta-go-vault.outputs.labels }}
+    - name: Build and push Python config
+      uses: docker/build-push-action@v5
+      with:
+        context: ./py
+        file: ./py/Dockerfile.config
+        push: true
+        tags: ${{ steps.meta-py-config.outputs.tags }}
+        labels: ${{ steps.meta-py-config.outputs.labels }}
+    - name: Build and push Python control
+      uses: docker/build-push-action@v5
+      with:
+        context: ./py
+        file: ./py/Dockerfile.control
+        push: true
+        tags: ${{ steps.meta-py-control.outputs.tags }}
+        labels: ${{ steps.meta-py-control.outputs.labels }}
+    - name: Build and push Python vault
+      uses: docker/build-push-action@v5
+      with:
+        context: ./py
+        file: ./py/Dockerfile.vault
+        push: true
+        tags: ${{ steps.meta-py-vault.outputs.tags }}
+        labels: ${{ steps.meta-py-vault.outputs.labels }}
