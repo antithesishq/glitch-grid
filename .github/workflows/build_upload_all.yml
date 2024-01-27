@@ -31,7 +31,7 @@ jobs:
     # are going to build and deploy.
     - name: Extract metadata (tags) for Docker workload
       id: meta-workload
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-workload
         tags: |
@@ -39,7 +39,7 @@ jobs:
           antithesis
     - name: Extract metadata (tags) for Docker Go config
       id: meta-go-config
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-go-config
         tags: |
@@ -47,7 +47,7 @@ jobs:
           antithesis
     - name: Extract metadata (tags) for Docker Go control
       id: meta-go-control
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-go-control
         tags: |
@@ -55,7 +55,7 @@ jobs:
           antithesis
     - name: Extract metadata (tags) for Docker Go vault
       id: meta-go-vault
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-go-vault
         tags: |
@@ -63,7 +63,7 @@ jobs:
           antithesis
     - name: Extract metadata (tags) for Docker Python config
       id: meta-py-config
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-py-config
         tags: |
@@ -71,7 +71,7 @@ jobs:
           antithesis
     - name: Extract metadata (tags) for Docker Python control
       id: meta-py-control
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-py-control
         tags: |
@@ -79,7 +79,7 @@ jobs:
           antithesis
     - name: Extract metadata (tags) for Docker Python vault
       id: meta-py-vault
-      uses: docker/metadata-action@v4
+      uses: docker/metadata-action@v5
       with:
         images: antithesishq/demo-py-vault
         tags: |
