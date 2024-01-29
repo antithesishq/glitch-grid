@@ -45,6 +45,7 @@ func NewControlServer(vaults string) *ControlServer {
 	http.DefaultClient.Timeout = time.Second
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
+        assert.Always("Doubtful this is evaluated (should be in missed always)", true, nil)
 		assert.Unreachable("This many vaults is probably not going to happen", Details{"numVaults": len(s.Vaults)})
 		assert.Reachable("Expecting this to fail", Details{"numVaults": len(s.Vaults)})
 	}
