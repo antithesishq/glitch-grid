@@ -12,8 +12,8 @@ COPY go.* control.go /go/src/github.com/antithesis/glitch-grid
 
 # Download install and run exigen
 RUN cd /go/src/github.com/antithesis/glitch-grid && \
-    go get github.com/antithesishq/antithesis-sdk-go/tools/exigen@v0.1.12 && \
-    go install github.com/antithesishq/antithesis-sdk-go/tools/exigen@v0.1.12 && \
+    go get github.com/antithesishq/antithesis-sdk-go/tools/exigen@v0.1.16 && \
+    go install github.com/antithesishq/antithesis-sdk-go/tools/exigen@v0.1.16 && \
     go mod tidy && \
     go generate
 

@@ -16,7 +16,10 @@ import (
 
 	"github.com/golang/glog"
 	"github.com/antithesishq/antithesis-sdk-go/assert"
+	"github.com/antithesishq/antithesis-sdk-go/lifecycle"
 )
+
+type Details map[string]any
 
 // A control server which maintains a list of vaults which will store the data.
 type ControlServer struct {
@@ -26,13 +29,12 @@ type ControlServer struct {
 	lock     sync.RWMutex
 }
 
-//go:generate exigen -v antithesis.com/go/glitch-grid
+//go:generate exigen -v antithesis.com/go/sample-project
 
 // Create and return a new Control server instance.
 // Provide a comma-separated list of vaults with which we will communicate.
 func NewControlServer(vaults string) *ControlServer {
-
-	assert.IsTrue("Control program starts", true, nil)
+	assert.Always("Instantiates a Control Server", true, nil)
 	s := new(ControlServer)
 	s.mux = http.NewServeMux()
 	s.Vaults = strings.Split(vaults, ",")
@@ -42,12 +44,18 @@ func NewControlServer(vaults string) *ControlServer {
 	// Set the default timeout for all HTTP operations to be one second.
 	http.DefaultClient.Timeout = time.Second
 	glog.Infof("Defined %d vaults", len(s.Vaults))
+	if len(s.Vaults) == 23456789 {
+		assert.Unreachable("This many vaults is probably not going to happen", Details{"numVaults": len(s.Vaults)})
+		assert.Reachable("Expecting this to fail", Details{"numVaults": len(s.Vaults)})
+	}
+	assert.Reachable("Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
 	return s
 }
 
 // Handle GET and POST requests to the root path.
 func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
+		assert.AlwaysOrUnreachable("Non-root request paths are identified", true, Details{"path": r.URL.Path})
 		// We only support operations on the root path.
 		http.NotFound(w, r)
 		return
@@ -57,6 +65,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		s.post(w, r)
 	} else {
+		assert.AlwaysOrUnreachable("Identified http method that is not handled", true, Details{"method": r.Method})
 		// Do not support PATCH, DELETE, etc, operations.
 		http.NotFound(w, r)
 	}
@@ -66,16 +75,22 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 // Poll all our backend servers and see if we have majority consensus.
 // Sends a 200 and the value to the client if we have a consensus, 500 otherwise.
 func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
+	assert.Always("Received a request to retrieve the counter's value", true, nil)
 	result := s.getValueFromVaults()
 	var statusCode int
 	var body string
 	if result >= 0 {
 		statusCode = http.StatusOK
 		body = fmt.Sprintf("%d", result)
+		assert.AlwaysOrUnreachable("Counter's value retrieved", true, Details{"counter": body, "status": statusCode})
 	} else {
+		assert.Unreachable("Counter should never be unavailable", Details{"result": result})
 		statusCode = http.StatusInternalServerError
 		body = "-1"
+		assert.AlwaysOrUnreachable("Handles counter unavailability", true, Details{"counter": body, "status": statusCode}) 
 	}
+	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
+	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode}) 
 	w.WriteHeader(statusCode)
 	w.Write([]byte(body))
 }
@@ -206,6 +221,7 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 	// booleans, where the value stored in the map doesn't really matter. The presence of ANY
 	// value is enough to show that we got a successful response from the vault.
 	resp := make(map[string]bool)
+	assert.AlwaysOrUnreachable("There are vaults to update", len(s.Vaults) > 0, Details{"numVaults": len(s.Vaults)})
 	s.postValueToVaults(body, resp)
 	// If the number of responses represents a majority of the vaults, then we can claim success
 	// in storing this value in our system. Otherwise it represents a server failure.
@@ -213,6 +229,9 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		// Set the min value here to prevent us from going backwards.
 		s.lock.Lock()
+		assert.AlwaysOrUnreachable("unnecessary update attempted", 
+			n > s.minValue, 
+			Details{"minValue": s.minValue, "requestedValue": n})
 		s.minValue = n
 		s.lock.Unlock()
 	} else {
@@ -242,6 +261,11 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 				resp[url] = true
 				m.Unlock()
 			} else {
+                errText := fmt.Sprintf("%v", err)
+				assert.AlwaysOrUnreachable("HTTP Status is never OK when receiving a Post error", 
+					(err != nil) || (r.StatusCode != http.StatusOK),
+					Details{"err": errText, "httpStatus": r.StatusCode})
+
 				// This could include a failure to connect or a timeout during the update.
 				glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
 			}
@@ -253,19 +277,29 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 
 // Check if this number represents a majority of the vaults, where majority has to be >50%.
 func (s *ControlServer) hasMajority(count int) bool {
+	assert.Always("The Control Service determines if there is a majority", true, nil)
+	assert.Always("Majority is always expected to be positive", count > 0, Details{"count": count})
+	assert.Always("There are vaults known to the Control Service", len(s.Vaults) > 0, nil)
 	numVaults := len(s.Vaults)
 	// By default this division will do the equivalent of math.Floor()
 	numForMajority := (numVaults / 2) + 1
-	return count >= numForMajority
+	haveEnoughVaults := (count >= numForMajority)
+	assert.Sometimes("There is a majority of vaults", haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
+	assert.Sometimes("There is not a majority of vaults", !haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
+	if numForMajority < 99 {
+		assert.Unreachable("Should not be an unreachable since we typically DO reach here", Details{"majorityNeeded": numForMajority})
+	}
+	return haveEnoughVaults
 }
 
 func main() {
 	fmt.Print("Control Server booting...\n")
-	assert.IsTrue("Program Started", true, nil)
+	assert.Always("Program Started", true, nil)
 	portPtr := flag.Int("port", 8000, "Port on which to listen for requests")
 	vaultsPtr := flag.String("vaults", "", "Comma-separated list of vaults")
 	flag.Parse()
 	s := NewControlServer(*vaultsPtr)
+	lifecycle.SetupComplete() // { "sut_setup_status": "complete" }
 	err := http.ListenAndServe(fmt.Sprintf(":%d", *portPtr), s.mux)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
