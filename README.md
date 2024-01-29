@@ -1,25 +1,24 @@
 ## Motivation
 
 Glitch Grid is a toy distributed system for demonstrating how to
-interface your system with the [Antithesis Platform](https://antithesis.com/). This project demonstrates:
+integrate with the [Antithesis Platform](https://antithesis.com/). This project demonstrates:
 
-* Use of an SDK for [assertion definition](https://antithesis.com/docs/using_antithesis/properties.html)
-   and control flow.
-* Build and, for Go, [source instrumentation](https://antithesis.com/docs/instrumentation/go_instrumentation.html)
-* Triggering tests and displaying results via [CI Integrations](https://antithesis.com/docs/using_antithesis/ci.html)
+* Use of [the Antithesis SDK]((https://antithesis.com/docs/using_antithesis/sdk/overview.html#))
+   to [definie assertions](https://antithesis.com/docs/using_antithesis/properties.html)
+* Instrumenting a Go project for [coverage information](https://antithesis.com/docs/instrumentation/go_instrumentation.html)
+* Triggering tests and receiving results using [Github Actions](https://antithesis.com/docs/using_antithesis/ci.html)
 
-Why demonstrate on a toy project? In order to have interesting test results, we wanted
-to have a software system that contains bugs! Welcome, GlitchGrid.
+Why demonstrate with a toy project? Most software has bugs, but for demonstration purposes 
+we wanted obvious, low-context bugs that project maintainers would not fix. Welcome, GlitchGrid!
 
-Please refer to the [Antithesis Docs](https://antithesis.com/docs/) for more information about
+Please refer to the [Antithesis Documentation](https://antithesis.com/docs/) for more information about
 how to get started with Antithesis, best practrices, etc.
 
 ### SDK Use
 
-This project includes [a variety of assertions](https://github.com/search?q=repo%3Aantithesishq%2Fglitch-grid+%28Always+OR+Sometimes%29&type=code)
-meant to demonstrate how to configure Antitehsis to look for violations of test properties
-about your software that you consider important. Test results include summaries and debugging
-information about each violation, if found.
+This project demonstrates how to [use the Antithesis SDK](https://github.com/search?q=repo%3Aantithesishq%2Fglitch-grid+%28Always+OR+Sometimes%29&type=code) to add assertions about your software.
+This includes conventional assertions, and also [Sometimes Assertions](https://antithesis.com/docs/best_practices/sometimes_assertions.html) which can help you
+assess the quality of your testing or check for unreachable code. 
 
 When software starts up in the Antithesis platform, there is usually setup work during which
 injecting faults is not productive. Because of this, Antithesis waits to start injecting
