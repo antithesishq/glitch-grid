@@ -61,30 +61,6 @@ jobs:
         tags: |
           type=sha
           antithesis
-    - name: Extract metadata (tags) for Docker Python config
-      id: meta-py-config
-      uses: docker/metadata-action@v5
-      with:
-        images: antithesishq/demo-py-config
-        tags: |
-          type=sha
-          antithesis
-    - name: Extract metadata (tags) for Docker Python control
-      id: meta-py-control
-      uses: docker/metadata-action@v5
-      with:
-        images: antithesishq/demo-py-control
-        tags: |
-          type=sha
-          antithesis
-    - name: Extract metadata (tags) for Docker Python vault
-      id: meta-py-vault
-      uses: docker/metadata-action@v5
-      with:
-        images: antithesishq/demo-py-vault
-        tags: |
-          type=sha
-          antithesis
 
     # Now build and push each of the containers.
     - name: Build and push workload
@@ -119,27 +95,3 @@ jobs:
         push: true
         tags: ${{ steps.meta-go-vault.outputs.tags }}
         labels: ${{ steps.meta-go-vault.outputs.labels }}
-    - name: Build and push Python config
-      uses: docker/build-push-action@v5
-      with:
-        context: ./py
-        file: ./py/Dockerfile.config
-        push: true
-        tags: ${{ steps.meta-py-config.outputs.tags }}
-        labels: ${{ steps.meta-py-config.outputs.labels }}
-    - name: Build and push Python control
-      uses: docker/build-push-action@v5
-      with:
-        context: ./py
-        file: ./py/Dockerfile.control
-        push: true
-        tags: ${{ steps.meta-py-control.outputs.tags }}
-        labels: ${{ steps.meta-py-control.outputs.labels }}
-    - name: Build and push Python vault
-      uses: docker/build-push-action@v5
-      with:
-        context: ./py
-        file: ./py/Dockerfile.vault
-        push: true
-        tags: ${{ steps.meta-py-vault.outputs.tags }}
-        labels: ${{ steps.meta-py-vault.outputs.labels }}
