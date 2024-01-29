@@ -1,9 +1,32 @@
-## Glitch Grid
+## Motivation
 
-This is a toy distributed system which we will use to demonstrate how to
-transform your system to run within [Antithesis](https://antithesis.com/). We have the same
-basic system implemented in Go and Python, as well as a language-agnostic
-workload which can be used to test the system.
+Glitch Grid is a toy distributed system for demonstrating how to
+interface your system with the [Antithesis Platform](https://antithesis.com/). This project demonstrates:
+
+* Use of an SDK for [assertion definition](https://antithesis.com/docs/using_antithesis/properties.html)
+   and control flow.
+* Build and, for Go, [source instrumentation](https://antithesis.com/docs/instrumentation/go_instrumentation.html)
+* Triggering tests and displaying results via [CI Integrations](https://antithesis.com/docs/using_antithesis/ci.html)
+
+Why demonstrate on a toy project? In order to have interesting test results, we wanted
+to have a software system that contains bugs! Welcome, GlitchGrid.
+
+Please refer to the [Antithesis Docs](https://antithesis.com/docs/) for more information about
+how to get started with Antithesis, best practrices, etc.
+
+### SDK Use
+
+This project includes [a variety of assertions](https://github.com/search?q=repo%3Aantithesishq%2Fglitch-grid+%28Always+OR+Sometimes%29&type=code)
+meant to demonstrate how to configure Antitehsis to look for violations of test properties
+about your software that you consider important. Test results include summaries and debugging
+information about each violation, if found.
+
+When software starts up in the Antithesis platform, there is usually setup work during which
+injecting faults is not productive. Because of this, Antithesis waits to start injecting
+faults until the software under test indicates that it is booted and ready. The SDK
+[lifecycle functions](https://antithesis.com/docs/using_antithesis/sdk/overview.html#)
+[are used](https://github.com/search?q=repo%3Aantithesishq%2Fglitch-grid+SetupComplete&type=code)
+to coordinate with the simulation.
 
 ### Architecture
 
@@ -36,10 +59,6 @@ The test workload is written in bash and uses `curl` to perform reads and writes
 can be configured using environment variables, controlling everything from startup times to the
 number of values written to the system during the test to (approximately) how often it will stop
 writing values and check if the system is in the correct state.
-
-### Python
-
-The Python implementation can be found in the `py/` subdirectory. It requires Python version 3.11 or higher.
 
 ### Go
 
