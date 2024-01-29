@@ -12,7 +12,7 @@ Why demonstrate with a toy project? Most software has bugs, but for demonstratio
 we wanted obvious, low-context bugs that project maintainers would not fix. Welcome, GlitchGrid!
 
 Please refer to the [Antithesis Documentation](https://antithesis.com/docs/) for more information about
-how to get started with Antithesis, best practrices, etc.
+how to get started with Antithesis, best practices, etc.
 
 ### SDK Use
 
