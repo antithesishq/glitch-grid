@@ -287,7 +287,7 @@ func (s *ControlServer) hasMajority(count int) bool {
 	assert.Sometimes("There is a majority of vaults", haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
 	assert.Sometimes("There is not a majority of vaults", !haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
 	if numForMajority < 99 {
-		assert.Unreachable("Should not be an unreachable since we typically DO reach here", Details{"majorityNeeded": numForMajority})
+		assert.Unreachable("Should be a failed 'Unreachable' since we typically DO reach here", Details{"majorityNeeded": numForMajority})
 	}
 	return haveEnoughVaults
 }
