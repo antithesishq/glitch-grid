@@ -33,7 +33,7 @@ RUN /opt/antithesis/bin/goinstrumentor \
 
 # Build control binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
-    go build control.go
+    go build -o control control.go control_exigen.go
 
 # Stage 3: lightweight "release"
 FROM docker.io/library/debian:bookworm-slim
