@@ -15,7 +15,6 @@ import (
 	"time"
 
 	"github.com/golang/glog"
-	"github.com/antithesishq/antithesis-sdk-go/assert"
 )
 
 // A control server which maintains a list of vaults which will store the data.
@@ -26,13 +25,10 @@ type ControlServer struct {
 	lock     sync.RWMutex
 }
 
-//go:generate exigen -v antithesis.com/go/glitch-grid
-
 // Create and return a new Control server instance.
 // Provide a comma-separated list of vaults with which we will communicate.
 func NewControlServer(vaults string) *ControlServer {
 
-	assert.IsTrue("Control program starts", true, nil)
 	s := new(ControlServer)
 	s.mux = http.NewServeMux()
 	s.Vaults = strings.Split(vaults, ",")
@@ -260,8 +256,6 @@ func (s *ControlServer) hasMajority(count int) bool {
 }
 
 func main() {
-	fmt.Print("Control Server booting...\n")
-	assert.IsTrue("Program Started", true, nil)
 	portPtr := flag.Int("port", 8000, "Port on which to listen for requests")
 	vaultsPtr := flag.String("vaults", "", "Comma-separated list of vaults")
 	flag.Parse()

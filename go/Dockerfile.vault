@@ -1,42 +1,23 @@
-# Stage 1: get instrumentor
-FROM docker.io/antithesishq/go-instrumentor AS instrumentor
-
-# Stage 2: Instrument
-FROM docker.io/library/golang:1.20-bookworm AS builder
+# stage 1: build
+FROM docker.io/library/golang:1.20-alpine3.18 AS builder
 LABEL maintainer="Antithesis <support@antithesis.com>"
+
+# Install deps
+RUN apk add --update bash
 
 # Add source code
 RUN mkdir -p /go/src/github.com/antithesis/glitch-grid
 COPY go.* vault.go /go/src/github.com/antithesis/glitch-grid
 
-# Copy the instrumentor and supporting files to their correct locations.
-COPY --from=instrumentor /opt/antithesis /opt/antithesis
-COPY --from=instrumentor /opt/antithesis/lib /lib
-
-# Create the destination output directory for the instrumented code.
-RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
-
-# Instrument
-RUN /opt/antithesis/bin/goinstrumentor \
-    -stderrthreshold=INFO \
-    -antithesis /opt/antithesis/instrumentation \
-    /go/src/github.com/antithesis/glitch-grid \
-    /go/src/github.com/antithesis/glitch-grid-instrumented
-
 # Build vault binary
-RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
+RUN cd /go/src/github.com/antithesis/glitch-grid && \
     go build vault.go
 
-# Stage 3: lightweight "release"
-FROM docker.io/library/debian:bookworm-slim
+# Stage 2: lightweight "release"
+FROM docker.io/library/alpine:latest
 LABEL maintainer="Antithesis <support@antithesis.com>"
 
-# Copy the instrumentor dynamic library from the instrumentation image
-# and the instrumented binary from the build image.
-COPY --from=instrumentor /opt/antithesis/lib/libvoidstar.so /lib/
 COPY --from=builder \
-  /go/src/github.com/antithesis/glitch-grid-instrumented/customer/vault /bin/
-RUN mkdir -p /symbols
-COPY --from=builder /go/src/github.com/antithesis/glitch-grid-instrumented/symbols /symbols/
+    /go/src/github.com/antithesis/glitch-grid/vault /bin/
 
 ENTRYPOINT [ "/bin/vault" ]
