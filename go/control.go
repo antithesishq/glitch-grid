@@ -236,7 +236,7 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 			glog.V(1).Infof("Setting vault %s value to %s", vault, string(body))
 			url := fmt.Sprintf("http://%s/", vault)
 			r, err := http.Post(url, "text/plain", bytes.NewBuffer(body))
-			if err == nil && r.StatusCode == http.StatusOK {
+			if err == nil && r != nil && r.StatusCode == http.StatusOK {
 				// Indicate that we received an OK from the vault.
 				m.Lock()
 				resp[url] = true
