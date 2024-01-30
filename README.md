@@ -43,4 +43,4 @@ The Python implementation can be found in the `py/` subdirectory. It requires Py
 
 ### Go
 
-The Go implementation can be found in the `go/` subdirectory. It requires Go version 1.19 or higher.
+The Go implementation can be found in the `go/` subdirectory. It requires Go version 1.20 or higher.
