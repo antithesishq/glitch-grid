@@ -1,9 +1,31 @@
-## Glitch Grid
+## Motivation
 
-This is a toy distributed system which we will use to demonstrate how to
-transform your system to run within [Antithesis](https://antithesis.com/). We have the same
-basic system implemented in Go and Python, as well as a language-agnostic
-workload which can be used to test the system.
+Glitch Grid is a toy distributed system for demonstrating how to
+integrate with the [Antithesis Platform](https://antithesis.com/). This project demonstrates:
+
+* Use of [the Antithesis SDK]((https://antithesis.com/docs/using_antithesis/sdk/overview.html#))
+   to [definie assertions](https://antithesis.com/docs/using_antithesis/properties.html)
+* Instrumenting a Go project for [coverage information](https://antithesis.com/docs/instrumentation/overview.html)
+* Triggering tests and receiving results using [Github Actions](https://antithesis.com/docs/using_antithesis/ci.html)
+
+Why demonstrate with a toy project? Most software has bugs, but for demonstration purposes 
+we wanted obvious, low-context bugs that project maintainers would not fix. Welcome, GlitchGrid!
+
+Please refer to the [Antithesis Documentation](https://antithesis.com/docs/) for more information about
+how to get started with Antithesis, best practices, etc.
+
+### SDK Use
+
+This project demonstrates how to [use the Antithesis SDK](https://github.com/search?q=repo%3Aantithesishq%2Fglitch-grid+%28Always+OR+Sometimes%29&type=code) to add assertions about your software.
+This includes conventional assertions, and also [Sometimes Assertions](https://antithesis.com/docs/best_practices/sometimes_assertions.html) which can help you
+assess the quality of your testing or check for unreachable code. 
+
+When software starts up in the Antithesis platform, there is usually setup work during which
+injecting faults is not productive. Because of this, Antithesis waits to start injecting
+faults until the software under test indicates that it is booted and ready. The SDK
+[lifecycle functions](https://antithesis.com/docs/using_antithesis/sdk/overview.html#)
+[are used](https://github.com/search?q=repo%3Aantithesishq%2Fglitch-grid+SetupComplete&type=code)
+to coordinate with the simulation.
 
 ### Architecture
 
@@ -36,10 +58,6 @@ The test workload is written in bash and uses `curl` to perform reads and writes
 can be configured using environment variables, controlling everything from startup times to the
 number of values written to the system during the test to (approximately) how often it will stop
 writing values and check if the system is in the correct state.
-
-### Python
-
-The Python implementation can be found in the `py/` subdirectory. It requires Python version 3.11 or higher.
 
 ### Go
 
