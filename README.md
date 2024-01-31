@@ -29,7 +29,7 @@ to coordinate with the simulation.
 
 ### Architecture
 
-The overall system is a distributed system which will remember the most recent positive
+This is a distributed system which will remember the most recent positive
 integer sent to it by a client. Clients talk to a mostly-stateless **control** server,
 which in turn will write to and read from one or more **vault** servers. Operations
 are only successful if *more than 50%* of vaults report success. The number stored in
