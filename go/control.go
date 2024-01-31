@@ -301,7 +301,7 @@ func main() {
 	flag.Parse()
 	s := NewControlServer(*vaultsPtr)
 	lifecycle.SetupComplete()
-	assert.Sometimes(("This sometimes will always fail", false, Details{})
+	assert.Sometimes("This sometimes will always fail", false, Details{})
 	err := http.ListenAndServe(fmt.Sprintf(":%d", *portPtr), s.mux)
 	if errors.Is(err, http.ErrServerClosed) {
 		fmt.Printf("server closed\n")
