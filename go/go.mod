@@ -1,4 +1,4 @@
-module antithesis.com/go/sample-project
+module antithesis.com/go/glitch-grid
 
 go 1.20
 

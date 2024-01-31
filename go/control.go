@@ -29,7 +29,7 @@ type ControlServer struct {
 	lock     sync.RWMutex
 }
 
-//go:generate exigen -v antithesis.com/go/sample-project
+//go:generate exigen -v antithesis.com/go/glitch-grid
 
 // Create and return a new Control server instance.
 // Provide a comma-separated list of vaults with which we will communicate.
@@ -46,8 +46,8 @@ func NewControlServer(vaults string) *ControlServer {
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
         assert.Always("Doubtful this is evaluated (should be in missed always)", true, nil)
-		assert.Unreachable("This many vaults is probably not going to happen", Details{"numVaults": len(s.Vaults)})
-		assert.Reachable("Expecting this to fail", Details{"numVaults": len(s.Vaults)})
+        assert.Unreachable("This many vaults is probably not going to happen", Details{"numVaults": len(s.Vaults)})
+        assert.Reachable("Expecting this to fail", Details{"numVaults": len(s.Vaults)})
 	}
 	assert.Reachable("Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
 	return s
