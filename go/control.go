@@ -89,8 +89,8 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		body = "-1"
 	}
-	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
 	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
+	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
 	w.WriteHeader(statusCode)
 	w.Write([]byte(body))
 }
