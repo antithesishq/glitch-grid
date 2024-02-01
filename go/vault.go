@@ -13,15 +13,13 @@ import (
 	"github.com/golang/glog"
 )
 
-
 // A vault server which maintains a list of vaults which will store the data (value).
 // We only store positive values.
 type VaultServer struct {
-	mux *http.ServeMux
-	port int
+	mux   *http.ServeMux
+	port  int
 	value int
 }
-
 
 // Create and return a new Control server instance.
 // Provide the port on which we will listen.
@@ -36,7 +34,6 @@ func NewVaultServer(port int) *VaultServer {
 	http.DefaultClient.Timeout = time.Second
 	return s
 }
-
 
 // Handle GET and POST requests to the root path.
 func (s *VaultServer) handle(w http.ResponseWriter, r *http.Request) {
@@ -55,13 +52,11 @@ func (s *VaultServer) handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 // Return the value stored in the vault. This should always be a success.
 func (s *VaultServer) get(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("%d", s.value)))
 }
-
 
 // Update the value stored in the vault.
 // Logs a warning if the value decreases for whatever reason (but still update it).
@@ -91,7 +86,6 @@ func (s *VaultServer) post(w http.ResponseWriter, r *http.Request) {
 		w.Write([]byte("Invalid or missing POST body"))
 	}
 }
-
 
 func main() {
 	portPtr := flag.Int("port", 8001, "Port on which to listen for requests")

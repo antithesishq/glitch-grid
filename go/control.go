@@ -14,9 +14,9 @@ import (
 	"sync"
 	"time"
 
-	"github.com/golang/glog"
 	"github.com/antithesishq/antithesis-sdk-go/assert"
 	"github.com/antithesishq/antithesis-sdk-go/lifecycle"
+	"github.com/golang/glog"
 )
 
 type Details map[string]any
@@ -45,9 +45,9 @@ func NewControlServer(vaults string) *ControlServer {
 	http.DefaultClient.Timeout = time.Second
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
-        assert.Always("Doubtful this is evaluated (should be in missed always)", true, nil)
-        assert.Unreachable("This many vaults is probably not going to happen", Details{"numVaults": len(s.Vaults)})
-        assert.Reachable("Expecting this to fail", Details{"numVaults": len(s.Vaults)})
+		assert.Always("Doubtful this is evaluated (should be in missed always)", true, nil)
+		assert.Unreachable("This many vaults is probably not going to happen", Details{"numVaults": len(s.Vaults)})
+		assert.Reachable("Expecting this to fail", Details{"numVaults": len(s.Vaults)})
 	}
 	assert.Reachable("Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
 	return s
@@ -88,10 +88,10 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 		assert.Unreachable("Counter should never be unavailable", Details{"result": result})
 		statusCode = http.StatusInternalServerError
 		body = "-1"
-		assert.AlwaysOrUnreachable("Handles counter unavailability", true, Details{"counter": body, "status": statusCode}) 
+		assert.AlwaysOrUnreachable("Handles counter unavailability", true, Details{"counter": body, "status": statusCode})
 	}
 	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
-	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode}) 
+	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
 	w.WriteHeader(statusCode)
 	w.Write([]byte(body))
 }
@@ -230,8 +230,8 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		// Set the min value here to prevent us from going backwards.
 		s.lock.Lock()
-		assert.AlwaysOrUnreachable("unnecessary update attempted", 
-			n > s.minValue, 
+		assert.AlwaysOrUnreachable("unnecessary update attempted",
+			n > s.minValue,
 			Details{"minValue": s.minValue, "requestedValue": n})
 		s.minValue = n
 		s.lock.Unlock()
@@ -262,8 +262,8 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 				resp[url] = true
 				m.Unlock()
 			} else {
-                errText := fmt.Sprintf("%v", err)
-				assert.AlwaysOrUnreachable("HTTP Status is never OK when receiving a Post error", 
+				errText := fmt.Sprintf("%v", err)
+				assert.AlwaysOrUnreachable("HTTP Status is never OK when receiving a Post error",
 					(err != nil) || (r.StatusCode != http.StatusOK),
 					Details{"err": errText, "httpStatus": r.StatusCode})
 
