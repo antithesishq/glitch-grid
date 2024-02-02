@@ -10,10 +10,10 @@ LABEL maintainer="Antithesis <support@antithesis.com>"
 RUN mkdir -p /go/src/github.com/antithesis/glitch-grid
 COPY go.* control.go /go/src/github.com/antithesis/glitch-grid
 
-# Download install and run exigen
+# Download install and run antithesis-go-generator
 RUN cd /go/src/github.com/antithesis/glitch-grid && \
-    go get github.com/antithesishq/antithesis-sdk-go/tools/exigen@v0.1.16 && \
-    go install github.com/antithesishq/antithesis-sdk-go/tools/exigen@v0.1.16 && \
+    go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.1.18 && \
+    go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.1.18 && \
     go mod tidy && \
     go generate
 
@@ -33,7 +33,7 @@ RUN /opt/antithesis/bin/goinstrumentor \
 
 # Build control binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
-    go build -o control control.go control_exigen.go
+    go build -o control control.go control_antithesis.go
 
 # Stage 3: lightweight "release"
 FROM docker.io/library/debian:bookworm-slim

@@ -29,7 +29,7 @@ type ControlServer struct {
 	lock     sync.RWMutex
 }
 
-//go:generate exigen -v antithesis.com/go/glitch-grid
+//go:generate antithesis-go-generator -v antithesis.com/go/glitch-grid
 
 // Create and return a new Control server instance.
 // Provide a comma-separated list of vaults with which we will communicate.
