@@ -4,7 +4,7 @@ Glitch Grid is a toy distributed system for demonstrating how to
 integrate with the [Antithesis Platform](https://antithesis.com/). This project demonstrates:
 
 * Use of [the Antithesis SDK]((https://antithesis.com/docs/using_antithesis/sdk/overview.html#))
-   to [definie assertions](https://antithesis.com/docs/using_antithesis/properties.html)
+   to [define assertions](https://antithesis.com/docs/using_antithesis/properties.html)
 * Instrumenting a Go project for [coverage information](https://antithesis.com/docs/instrumentation/overview.html)
 * Triggering tests and receiving results using [Github Actions](https://antithesis.com/docs/using_antithesis/ci.html)
 
