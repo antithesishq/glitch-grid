@@ -7,8 +7,8 @@ COPY go.* control.go /go/src/github.com/antithesis/glitch-grid
 
 # Download install and run antithesis-go-generator
 RUN cd /go/src/github.com/antithesis/glitch-grid && \
-    go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.1.18 && \
-    go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.1.18 && \
+    go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.1.19 && \
+    go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.1.19 && \
     go mod tidy && \
     go generate
 
