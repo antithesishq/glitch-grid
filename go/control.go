@@ -89,6 +89,11 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusInternalServerError
 		body = "-1"
 	}
+
+	if result == -100 {
+		assert.Sometimes("Control Service: the counter return -100", result == -100, nil)
+	}
+
 	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
 	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
 	assert.Always("The server never return a 500 HTTP response code", statusCode != http.StatusInternalServerError, Details{"status": statusCode})
