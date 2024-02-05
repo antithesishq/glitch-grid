@@ -91,6 +91,7 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 	}
 	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
 	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
+	assert.Always("The server never return a 500 HTTP response code", statusCode != http.StatusInternalServerError, Details{"status": statusCode})
 	w.WriteHeader(statusCode)
 	w.Write([]byte(body))
 }
