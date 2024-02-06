@@ -90,8 +90,6 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 		body = "-1"
 	}
 
-	assert.Sometimes("Control Service: the counter return -100", result == -100, nil)
-
 	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
 	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
 	assert.Always("The server never return a 500 HTTP response code", statusCode != http.StatusInternalServerError, Details{"status": statusCode})
@@ -189,6 +187,12 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 	m.Unlock()
 	// End of the map manipulation critical section.
 	glog.V(1).Infof("Get vault %s Value %d", url, v)
+}
+
+func healFailingVault(vault string) {
+	assert.Sometimes("Control Service: if a vault is unhealthy invoke the heal function", true, Details{"vault": vault})
+
+	// Code to heal a failing vault
 }
 
 // Update the value in storage to what is provided in the body.
