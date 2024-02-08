@@ -45,7 +45,7 @@ func NewControlServer(vaults string) *ControlServer {
 	http.DefaultClient.Timeout = time.Second
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
-		assert.Always("This is an unreachable always, we should never have 23456789 vaults", false, nil)
+		assert.Always("This is an unreachable always; we should never have 23456789 vaults", false, nil)
 		assert.Unreachable("We have 23456789 vaults should be unreachable", Details{"numVaults": len(s.Vaults)})
 		assert.Reachable("This line should never execute, but since this is a reachable assert, it will fail in Antithesis.", Details{"numVaults": len(s.Vaults)})
 	}
@@ -56,7 +56,7 @@ func NewControlServer(vaults string) *ControlServer {
 // Handle GET and POST requests to the root path.
 func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		assert.AlwaysOrUnreachable("Control service recieved a non-root request paths & handled that correctly.", true, Details{"path": r.URL.Path})
+		assert.AlwaysOrUnreachable("Control service: recieved a non-root request paths & handled that correctly.", true, Details{"path": r.URL.Path})
 		// We only support operations on the root path.
 		http.NotFound(w, r)
 		return
@@ -66,7 +66,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		s.post(w, r)
 	} else {
-		assert.AlwaysOrUnreachable("Control service recieved a http method that is not a GET or a POST & handled that correctly.", true, Details{"method": r.Method})
+		assert.AlwaysOrUnreachable("Control service: recieved a http method that is not a GET or a POST & handled that correctly.", true, Details{"method": r.Method})
 		// Do not support PATCH, DELETE, etc, operations.
 		http.NotFound(w, r)
 	}
@@ -76,7 +76,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 // Poll all our backend servers and see if we have majority consensus.
 // Sends a 200 and the value to the client if we have a consensus, 500 otherwise.
 func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
-	assert.Always("Control service received a request to retrieve the counter's value", true, nil)
+	assert.Always("Control service: received a request to retrieve the counter's value", true, nil)
 	result := s.getValueFromVaults()
 	var statusCode int
 	var body string
@@ -85,7 +85,7 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 		statusCode = http.StatusOK
 		body = fmt.Sprintf("%d", result)
 	} else {
-		assert.Unreachable("Control Service: Counter should never be unavailable", Details{"result": result})
+		assert.Unreachable("Counter should never be unavailable", Details{"result": result})
 		statusCode = http.StatusInternalServerError
 		body = "-1"
 	}
@@ -190,7 +190,7 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 }
 
 func healFailingVault(vault string) {
-	assert.Sometimes("Control Service: if a vault is unhealthy invoke the heal function", true, Details{"vault": vault})
+	assert.Sometimes("Control service: if a vault is unhealthy invoke the heal function", true, Details{"vault": vault})
 
 	// Code to heal a failing vault
 }
@@ -229,7 +229,7 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 	// booleans, where the value stored in the map doesn't really matter. The presence of ANY
 	// value is enough to show that we got a successful response from the vault.
 	resp := make(map[string]bool)
-	assert.AlwaysOrUnreachable("Control Service: There are vaults to update", len(s.Vaults) > 0, Details{"numVaults": len(s.Vaults)})
+	assert.AlwaysOrUnreachable("Control service: there are vaults to update", len(s.Vaults) > 0, Details{"numVaults": len(s.Vaults)})
 	s.postValueToVaults(body, resp)
 	// If the number of responses represents a majority of the vaults, then we can claim success
 	// in storing this value in our system. Otherwise it represents a server failure.
@@ -237,7 +237,7 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		// Set the min value here to prevent us from going backwards.
 		s.lock.Lock()
-		assert.AlwaysOrUnreachable("Control Service: Unnecessary update attempted",
+		assert.AlwaysOrUnreachable("Control service: unnecessary update attempted",
 			n > s.minValue,
 			Details{"minValue": s.minValue, "requestedValue": n})
 		s.minValue = n
@@ -285,38 +285,38 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 
 // Check if this number represents a majority of the vaults, where majority has to be >50%.
 func (s *ControlServer) hasMajority(count int) bool {
-	assert.Always("Control Service: determine if there is a majority", true, nil)
-	assert.Always("Control Service: majority is always expected to be positive", count > 0, Details{"count": count})
-	assert.Always("Control service: there are vaults known to the Control Service", len(s.Vaults) > 0, nil)
+	assert.Always("Control service: determine if there is a majority", true, nil)
+	assert.Always("Control service: majority is always expected to be positive", count > 0, Details{"count": count})
+	assert.Always("Control service: there are vaults known to the service", len(s.Vaults) > 0, nil)
 	numVaults := len(s.Vaults)
 	// By default this division will do the equivalent of math.Floor()
 	numForMajority := (numVaults / 2) + 1
 	haveEnoughVaults := (count >= numForMajority)
 	// We expect both conditions below to be sometimes true
-	assert.Sometimes("Control Service: there is a majority of vaults", haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
-	assert.Sometimes("Control Service: there is not a majority of vaults", !haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
+	assert.Sometimes("Control service: there is a majority of vaults", haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
+	assert.Sometimes("Control service: there is not a majority of vaults", !haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
 	// We expect numForMajority to be less than 99
 	if numForMajority < 99 {
-		assert.Unreachable("Control Service: Expected failure as we expect the numForMajority to be less than 99 sometimes", Details{"majorityNeeded": numForMajority})
+		assert.Unreachable("Control Service: expected failure as we expect the numForMajority to be less than 99 sometimes", Details{"majorityNeeded": numForMajority})
 	}
 	return haveEnoughVaults
 }
 
 func main() {
 	fmt.Print("Control Server booting...\n")
-	assert.Always("Control service started", true, nil)
+	assert.Always("Control service: service started", true, nil)
 	portPtr := flag.Int("port", 8000, "Port on which to listen for requests")
 	vaultsPtr := flag.String("vaults", "", "Comma-separated list of vaults")
 	flag.Parse()
 	s := NewControlServer(*vaultsPtr)
 	lifecycle.SetupComplete()
-	assert.Always("Control service setup complete", true, nil)
+	assert.Always("Control service: setup complete", true, nil)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", *portPtr), s.mux)
 	if errors.Is(err, http.ErrServerClosed) {
-		assert.Unreachable("Control service closed unexpectedly", Details{"error": err})
+		assert.Unreachable("Control service: closed unexpectedly", Details{"error": err})
 		fmt.Printf("server closed\n")
 	} else if err != nil {
-		assert.Unreachable("Control service did not start", Details{"error": err})
+		assert.Unreachable("Control service: did not start", Details{"error": err})
 		fmt.Printf("error starting server: %s\n", err)
 		os.Exit(1)
 	}
