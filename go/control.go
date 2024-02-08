@@ -45,8 +45,9 @@ func NewControlServer(vaults string) *ControlServer {
 	http.DefaultClient.Timeout = time.Second
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
-		assert.Always("This is an unreachable always; we should never have 23456789 vaults", false, nil)
 		assert.Unreachable("We have 23456789 vaults should be unreachable", Details{"numVaults": len(s.Vaults)})
+		
+		assert.Always("This line should never execute, but since this is an always assert, it will fail in Antithesis.", true, nil)
 		assert.Reachable("This line should never execute, but since this is a reachable assert, it will fail in Antithesis.", Details{"numVaults": len(s.Vaults)})
 	}
 	assert.Reachable("Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
@@ -190,7 +191,7 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 }
 
 func healFailingVault(vault string) {
-	assert.Sometimes("Control service: if a vault is unhealthy invoke the heal function", true, Details{"vault": vault})
+	assert.Sometimes("Control service: invoked heal function on unhealthy vault", true, Details{"vault": vault})
 
 	// Code to heal a failing vault
 }
