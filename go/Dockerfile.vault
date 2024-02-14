@@ -1,7 +1,4 @@
-# Stage 1: get instrumentor
-FROM docker.io/antithesishq/go-instrumentor AS instrumentor
-
-# Stage 2: Instrument
+# Stage 1: Get Golang image
 FROM docker.io/library/golang:1.20-bookworm AS builder
 LABEL maintainer="Antithesis <support@antithesis.com>"
 
@@ -9,31 +6,30 @@ LABEL maintainer="Antithesis <support@antithesis.com>"
 RUN mkdir -p /go/src/github.com/antithesis/glitch-grid
 COPY go.* vault.go /go/src/github.com/antithesis/glitch-grid
 
-# Copy the instrumentor and supporting files to their correct locations.
-COPY --from=instrumentor /opt/antithesis /opt/antithesis
-COPY --from=instrumentor /opt/antithesis/lib /lib
+# Download and install antithesis-go-instrumentor
+# Installs into $GOPATH/bin => /go/bin
+RUN cd /go/src/github.com/antithesis/glitch-grid && \
+    go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.2.1 && \
+    go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-generator@v0.2.1 && \
+    go mod tidy
 
 # Create the destination output directory for the instrumented code.
 RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
 
-# Instrument
-RUN /opt/antithesis/bin/goinstrumentor \
-    -stderrthreshold=INFO \
-    -antithesis /opt/antithesis/instrumentation \
+# Perform instrumentation
+RUN /go/bin/antithesis-go-instrumentor \
     /go/src/github.com/antithesis/glitch-grid \
     /go/src/github.com/antithesis/glitch-grid-instrumented
 
 # Build vault binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
-    go build vault.go
+    go build -o vault vault.go glitch-grid_antithesis_catalog.go
 
-# Stage 3: lightweight "release"
+# Stage 2: lightweight "release"
 FROM docker.io/library/debian:bookworm-slim
 LABEL maintainer="Antithesis <support@antithesis.com>"
 
-# Copy the instrumentor dynamic library from the instrumentation image
-# and the instrumented binary from the build image.
-COPY --from=instrumentor /opt/antithesis/lib/libvoidstar.so /lib/
+# Copy the instrumented binary, and symbols from the build image.
 COPY --from=builder \
   /go/src/github.com/antithesis/glitch-grid-instrumented/customer/vault /bin/
 RUN mkdir -p /symbols
