@@ -168,6 +168,11 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 	glog.V(1).Infof("Get vault %s Value %d", url, v)
 }
 
+// TODO: Call this when we detect that a vault is in a bad state.
+func healFailingVault(vault string) {
+	// Code to heal a failing vault
+}
+
 // Update the value in storage to what is provided in the body.
 // Contact each vault and store that value in the vault.
 func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
