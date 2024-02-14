@@ -13,12 +13,11 @@ import (
 	"github.com/golang/glog"
 )
 
-
 // A vault server which maintains a list of vaults which will store the data (value).
 // We only store positive values.
 type VaultServer struct {
-	mux *http.ServeMux
-	port int
+	mux   *http.ServeMux
+	port  int
 	value int
 }
 
