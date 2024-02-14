@@ -87,7 +87,6 @@ func (s *VaultServer) post(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 func main() {
 	portPtr := flag.Int("port", 8001, "Port on which to listen for requests")
 	flag.Parse()
