@@ -252,10 +252,12 @@ func (s *ControlServer) hasMajority(count int) bool {
 	numVaults := len(s.Vaults)
 	// By default this division will do the equivalent of math.Floor()
 	numForMajority := (numVaults / 2) + 1
-	return count >= numForMajority
+	haveEnoughVaults := count >= numForMajority
+	return haveEnoughVaults
 }
 
 func main() {
+	fmt.Print("Control Server booting...\n")
 	portPtr := flag.Int("port", 8000, "Port on which to listen for requests")
 	vaultsPtr := flag.String("vaults", "", "Comma-separated list of vaults")
 	flag.Parse()
