@@ -22,7 +22,6 @@ type VaultServer struct {
 	value int
 }
 
-
 // Create and return a new Control server instance.
 // Provide the port on which we will listen.
 // We store the port of the vault and not the controller, since the port is how we will
@@ -36,7 +35,6 @@ func NewVaultServer(port int) *VaultServer {
 	http.DefaultClient.Timeout = time.Second
 	return s
 }
-
 
 // Handle GET and POST requests to the root path.
 func (s *VaultServer) handle(w http.ResponseWriter, r *http.Request) {
@@ -55,13 +53,11 @@ func (s *VaultServer) handle(w http.ResponseWriter, r *http.Request) {
 	}
 }
 
-
 // Return the value stored in the vault. This should always be a success.
 func (s *VaultServer) get(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusOK)
 	w.Write([]byte(fmt.Sprintf("%d", s.value)))
 }
-
 
 // Update the value stored in the vault.
 // Logs a warning if the value decreases for whatever reason (but still update it).
@@ -79,7 +75,7 @@ func (s *VaultServer) post(w http.ResponseWriter, r *http.Request) {
 	if n >= 0 && e == nil {
 		// We only store positive values.
 		if n < s.value {
-			glog.Warningf("THIS SHOULD NEVER HAPPEN: Counter value will regress from %d to %d", s.value, n)
+			glog.Warningf("THIS SHOULD NEVER HAPPEN: Counter value regressed from %d to %d", s.value, n)
 		}
 		s.value = n
 		glog.Infof("Set Vault :%d Counter %d", s.port, s.value)
