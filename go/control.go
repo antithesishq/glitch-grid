@@ -190,6 +190,7 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 	glog.V(1).Infof("Get vault %s Value %d", url, v)
 }
 
+// TODO: Call this when we detect that a vault is in a bad state.
 func healFailingVault(vault string) {
 	assert.Sometimes("Control service: invoked heal function on unhealthy vault", true, Details{"vault": vault})
 
