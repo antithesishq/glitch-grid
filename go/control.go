@@ -252,7 +252,7 @@ func (s *ControlServer) hasMajority(count int) bool {
 	numVaults := len(s.Vaults)
 	// By default this division will do the equivalent of math.Floor()
 	numForMajority := (numVaults / 2) + 1
-	haveEnoughVaults := count >= numForMajority
+	haveEnoughVaults := (count >= numForMajority)
 	return haveEnoughVaults
 }
 
