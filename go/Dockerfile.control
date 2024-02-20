@@ -17,7 +17,7 @@ RUN cd /go/src/github.com/antithesis/glitch-grid && \
 RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
 
 # Perform instrumentation
-RUN /go/bin/antithesis-go-instrumentor \
+RUN /go/bin/antithesis-go-instrumentor -instrumentor_version v0.2.3 \
     /go/src/github.com/antithesis/glitch-grid \
     /go/src/github.com/antithesis/glitch-grid-instrumented && \
     cat /go/src/github.com/antithesis/glitch-grid/go.mod && \
