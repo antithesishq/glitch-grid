@@ -22,7 +22,7 @@ RUN /go/bin/antithesis-go-instrumentor \
     /go/src/github.com/antithesis/glitch-grid-instrumented && \
     cat /go/src/github.com/antithesis/glitch-grid/go.mod && \
     echo "---" && \
-    cat /go/src/github.com/antithesis/glitch-grid-instrumented
+    cat /go/src/github.com/antithesis/glitch-grid-instrumented/go.mod
 
 
 # Build control binary
