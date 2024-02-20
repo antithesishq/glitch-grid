@@ -19,7 +19,11 @@ RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
 # Perform instrumentation
 RUN /go/bin/antithesis-go-instrumentor \
     /go/src/github.com/antithesis/glitch-grid \
-    /go/src/github.com/antithesis/glitch-grid-instrumented
+    /go/src/github.com/antithesis/glitch-grid-instrumented && \
+    cat /go/src/github.com/antithesis/glitch-grid/go.mod && \
+    echo "---" && \
+    cat /go/src/github.com/antithesis/glitch-grid-instrumented
+
 
 # Build control binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
