@@ -57,7 +57,7 @@ func NewControlServer(vaults string) *ControlServer {
 // Handle GET and POST requests to the root path.
 func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		assert.AlwaysOrUnreachable("Control service: recieved a non-root request paths & handled that correctly.", true, Details{"path": r.URL.Path})
+		assert.AlwaysOrUnreachable("Control service: received a non-root request paths & handled that correctly.", true, Details{"path": r.URL.Path})
 		// We only support operations on the root path.
 		http.NotFound(w, r)
 		return
@@ -67,7 +67,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		s.post(w, r)
 	} else {
-		assert.AlwaysOrUnreachable("Control service: recieved a http method that is not a GET or a POST & handled that correctly.", true, Details{"method": r.Method})
+		assert.AlwaysOrUnreachable("Control service: received a http method that is not a GET or a POST & handled that correctly.", true, Details{"method": r.Method})
 		// Do not support PATCH, DELETE, etc, operations.
 		http.NotFound(w, r)
 	}
