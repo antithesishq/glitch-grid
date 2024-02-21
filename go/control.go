@@ -46,7 +46,7 @@ func NewControlServer(vaults string) *ControlServer {
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
 		assert.Unreachable("We have 23456789 vaults should be unreachable", Details{"numVaults": len(s.Vaults)})
-		
+
 		assert.Always(true, "This line should never execute, but since this is an always assert, it will fail in Antithesis.", nil)
 		assert.Reachable("This line should never execute, but since this is a reachable assert, it will fail in Antithesis.", Details{"numVaults": len(s.Vaults)})
 	}
@@ -232,10 +232,10 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 	// value is enough to show that we got a successful response from the vault.
 	resp := make(map[string]bool)
 	assert.AlwaysOrUnreachable(
-    len(s.Vaults) > 0, 
-    "Control service: there are vaults to update", 
-    Details{"numVaults": len(s.Vaults)},
-  )
+		len(s.Vaults) > 0,
+		"Control service: there are vaults to update",
+		Details{"numVaults": len(s.Vaults)},
+	)
 	s.postValueToVaults(body, resp)
 	// If the number of responses represents a majority of the vaults, then we can claim success
 	// in storing this value in our system. Otherwise it represents a server failure.
@@ -244,10 +244,10 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 		// Set the min value here to prevent us from going backwards.
 		s.lock.Lock()
 		assert.AlwaysOrUnreachable(
-      n > s.minValue,
-      "Control service: unnecessary update attempted",
+			n > s.minValue,
+			"Control service: unnecessary update attempted",
 			Details{"minValue": s.minValue, "requestedValue": n},
-    )
+		)
 		s.minValue = n
 		s.lock.Unlock()
 	} else {
@@ -272,46 +272,46 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 			url := fmt.Sprintf("http://%s/", vault)
 			r, err := http.Post(url, "text/plain", bytes.NewBuffer(body))
 
-      // No error was provided by http.Post()
+			// No error was provided by http.Post()
 			if err == nil {
-        if r != nil {
-          if r.StatusCode == http.StatusOK {
-            m.Lock()
-            resp[url] = true
-            m.Unlock()
-          } else {
-            assert.AlwaysOrUnreachable(
-              true,
-              "HTTP Status might not be OK when http.Post() reports no error has occurred",
-              Details{"statusCode": r.StatusCode},
-            )
-            // This could include a failure to connect or a timeout during the update.
-            glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
-          }
-        } else {
-          assert.Unreachable("There is no error reported by http.Post(), and HTTP Status is not available", nil)
-        }
-      } 
+				if r != nil {
+					if r.StatusCode == http.StatusOK {
+						m.Lock()
+						resp[url] = true
+						m.Unlock()
+					} else {
+						assert.AlwaysOrUnreachable(
+							true,
+							"HTTP Status might not be OK when http.Post() reports no error has occurred",
+							Details{"statusCode": r.StatusCode},
+						)
+						// This could include a failure to connect or a timeout during the update.
+						glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
+					}
+				} else {
+					assert.Unreachable("There is no error reported by http.Post(), and HTTP Status is not available", nil)
+				}
+			}
 
-      // An error was provided by http.Post()
-      if err != nil {
+			// An error was provided by http.Post()
+			if err != nil {
 				errText := fmt.Sprintf("%v", err)
-        if r != nil {
-          assert.AlwaysOrUnreachable(
-            r.StatusCode != http.StatusOK,
-            "HTTP Status is never OK when receiving a Post error",
-            Details{"err": errText, "httpStatus": r.StatusCode},
-          )
-        } else {
-          assert.AlwaysOrUnreachable(
-            true,
-            "HTTP Status may not be available when http.Post() returns an error",
-            Details{"err": errText},
-          )
-        }
+				if r != nil {
+					assert.AlwaysOrUnreachable(
+						r.StatusCode != http.StatusOK,
+						"HTTP Status is never OK when receiving a Post error",
+						Details{"err": errText, "httpStatus": r.StatusCode},
+					)
+				} else {
+					assert.AlwaysOrUnreachable(
+						true,
+						"HTTP Status may not be available when http.Post() returns an error",
+						Details{"err": errText},
+					)
+				}
 				// This could include a failure to connect or a timeout during the update.
 				glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
-      }
+			}
 
 		}(&m, vault, body, resp)
 	}
