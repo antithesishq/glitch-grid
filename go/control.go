@@ -34,7 +34,7 @@ type ControlServer struct {
 // Create and return a new Control server instance.
 // Provide a comma-separated list of vaults with which we will communicate.
 func NewControlServer(vaults string) *ControlServer {
-	assert.Always("Instantiates a Control Server", true, nil)
+	assert.Always(true, "Instantiates a Control Server", nil)
 	s := new(ControlServer)
 	s.mux = http.NewServeMux()
 	s.Vaults = strings.Split(vaults, ",")
@@ -46,8 +46,8 @@ func NewControlServer(vaults string) *ControlServer {
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
 		assert.Unreachable("We have 23456789 vaults should be unreachable", Details{"numVaults": len(s.Vaults)})
-		
-		assert.Always("This line should never execute, but since this is an always assert, it will fail in Antithesis.", true, nil)
+
+		assert.Always(true, "This line should never execute, but since this is an always assert, it will fail in Antithesis.", nil)
 		assert.Reachable("This line should never execute, but since this is a reachable assert, it will fail in Antithesis.", Details{"numVaults": len(s.Vaults)})
 	}
 	assert.Reachable("Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
@@ -57,7 +57,7 @@ func NewControlServer(vaults string) *ControlServer {
 // Handle GET and POST requests to the root path.
 func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	if r.URL.Path != "/" {
-		assert.AlwaysOrUnreachable("Control service: received a non-root request paths & handled that correctly.", true, Details{"path": r.URL.Path})
+		assert.AlwaysOrUnreachable(true, "Control service: received a non-root request paths & handled that correctly.", Details{"path": r.URL.Path})
 		// We only support operations on the root path.
 		http.NotFound(w, r)
 		return
@@ -67,7 +67,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		s.post(w, r)
 	} else {
-		assert.AlwaysOrUnreachable("Control service: received a http method that is not a GET or a POST & handled that correctly.", true, Details{"method": r.Method})
+		assert.AlwaysOrUnreachable(true, "Control service: received a http method that is not a GET or a POST & handled that correctly.", Details{"method": r.Method})
 		// Do not support PATCH, DELETE, etc, operations.
 		http.NotFound(w, r)
 	}
@@ -77,12 +77,12 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 // Poll all our backend servers and see if we have majority consensus.
 // Sends a 200 and the value to the client if we have a consensus, 500 otherwise.
 func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
-	assert.Always("Control service: received a request to retrieve the counter's value", true, nil)
+	assert.Always(true, "Control service: received a request to retrieve the counter's value", nil)
 	result := s.getValueFromVaults()
 	var statusCode int
 	var body string
 	if result >= 0 {
-		assert.AlwaysOrUnreachable("Counter's value retrieved", true, Details{"counter": body, "status": statusCode})
+		assert.AlwaysOrUnreachable(true, "Counter's value retrieved", Details{"counter": body, "status": statusCode})
 		statusCode = http.StatusOK
 		body = fmt.Sprintf("%d", result)
 	} else {
@@ -92,8 +92,8 @@ func (s *ControlServer) get(w http.ResponseWriter, r *http.Request) {
 	}
 
 	expected_status := (statusCode == http.StatusOK) || (statusCode == http.StatusInternalServerError)
-	assert.AlwaysOrUnreachable("HTTP return status is expected", expected_status, Details{"status": statusCode})
-	assert.Always("The server never return a 500 HTTP response code", statusCode != http.StatusInternalServerError, Details{"status": statusCode})
+	assert.AlwaysOrUnreachable(expected_status, "HTTP return status is expected", Details{"status": statusCode})
+	assert.Always(statusCode != http.StatusInternalServerError, "The server never return a 500 HTTP response code", Details{"status": statusCode})
 	w.WriteHeader(statusCode)
 	w.Write([]byte(body))
 }
@@ -192,7 +192,7 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 
 // TODO: Call this when we detect that a vault is in a bad state.
 func healFailingVault(vault string) {
-	assert.Sometimes("Control service: invoked heal function on unhealthy vault", true, Details{"vault": vault})
+	assert.Sometimes(true, "Control service: invoked heal function on unhealthy vault", Details{"vault": vault})
 
 	// Code to heal a failing vault
 }
@@ -231,7 +231,11 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 	// booleans, where the value stored in the map doesn't really matter. The presence of ANY
 	// value is enough to show that we got a successful response from the vault.
 	resp := make(map[string]bool)
-	assert.AlwaysOrUnreachable("Control service: there are vaults to update", len(s.Vaults) > 0, Details{"numVaults": len(s.Vaults)})
+	assert.AlwaysOrUnreachable(
+		len(s.Vaults) > 0,
+		"Control service: there are vaults to update",
+		Details{"numVaults": len(s.Vaults)},
+	)
 	s.postValueToVaults(body, resp)
 	// If the number of responses represents a majority of the vaults, then we can claim success
 	// in storing this value in our system. Otherwise it represents a server failure.
@@ -239,9 +243,11 @@ func (s *ControlServer) post(w http.ResponseWriter, r *http.Request) {
 		w.WriteHeader(http.StatusOK)
 		// Set the min value here to prevent us from going backwards.
 		s.lock.Lock()
-		assert.AlwaysOrUnreachable("Control service: unnecessary update attempted",
+		assert.AlwaysOrUnreachable(
 			n > s.minValue,
-			Details{"minValue": s.minValue, "requestedValue": n})
+			"Control service: unnecessary update attempted",
+			Details{"minValue": s.minValue, "requestedValue": n},
+		)
 		s.minValue = n
 		s.lock.Unlock()
 	} else {
@@ -265,20 +271,48 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 			glog.V(1).Infof("Setting vault %s value to %s", vault, string(body))
 			url := fmt.Sprintf("http://%s/", vault)
 			r, err := http.Post(url, "text/plain", bytes.NewBuffer(body))
-			if err == nil && r != nil && r.StatusCode == http.StatusOK {
-				// Indicate that we received an OK from the vault.
-				m.Lock()
-				resp[url] = true
-				m.Unlock()
-			} else {
-				errText := fmt.Sprintf("%v", err)
-				assert.AlwaysOrUnreachable("HTTP Status is never OK when receiving a Post error",
-					(err != nil) || (r.StatusCode != http.StatusOK),
-					Details{"err": errText, "httpStatus": r.StatusCode})
 
+			// No error was provided by http.Post()
+			if err == nil {
+				if r != nil {
+					if r.StatusCode == http.StatusOK {
+						m.Lock()
+						resp[url] = true
+						m.Unlock()
+					} else {
+						assert.AlwaysOrUnreachable(
+							true,
+							"HTTP Status might not be OK when http.Post() reports no error has occurred",
+							Details{"statusCode": r.StatusCode},
+						)
+						// This could include a failure to connect or a timeout during the update.
+						glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
+					}
+				} else {
+					assert.Unreachable("There is no error reported by http.Post(), and HTTP Status is not available", nil)
+				}
+			}
+
+			// An error was provided by http.Post()
+			if err != nil {
+				errText := fmt.Sprintf("%v", err)
+				if r != nil {
+					assert.AlwaysOrUnreachable(
+						r.StatusCode != http.StatusOK,
+						"HTTP Status is never OK when receiving a Post error",
+						Details{"err": errText, "httpStatus": r.StatusCode},
+					)
+				} else {
+					assert.AlwaysOrUnreachable(
+						true,
+						"HTTP Status may not be available when http.Post() returns an error",
+						Details{"err": errText},
+					)
+				}
 				// This could include a failure to connect or a timeout during the update.
 				glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
 			}
+
 		}(&m, vault, body, resp)
 	}
 	// Wait for all the connections to complete/timeout/fail.
@@ -287,16 +321,16 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 
 // Check if this number represents a majority of the vaults, where majority has to be >50%.
 func (s *ControlServer) hasMajority(count int) bool {
-	assert.Always("Control service: determine if there is a majority", true, nil)
-	assert.Always("Control service: majority is always expected to be positive", count > 0, Details{"count": count})
-	assert.Always("Control service: there are vaults known to the service", len(s.Vaults) > 0, nil)
+	assert.Always(true, "Control service: determine if there is a majority", nil)
+	assert.Always(count > 0, "Control service: majority is always expected to be positive", Details{"count": count})
+	assert.Always(len(s.Vaults) > 0, "Control service: there are vaults known to the service", nil)
 	numVaults := len(s.Vaults)
 	// By default this division will do the equivalent of math.Floor()
 	numForMajority := (numVaults / 2) + 1
 	haveEnoughVaults := (count >= numForMajority)
 	// We expect both conditions below to be sometimes true
-	assert.Sometimes("Control service: there is a majority of vaults", haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
-	assert.Sometimes("Control service: there is not a majority of vaults", !haveEnoughVaults, Details{"count": count, "majorityNeeded": numForMajority})
+	assert.Sometimes(haveEnoughVaults, "Control service: there is a majority of vaults", Details{"count": count, "majorityNeeded": numForMajority})
+	assert.Sometimes(!haveEnoughVaults, "Control service: there is not a majority of vaults", Details{"count": count, "majorityNeeded": numForMajority})
 	// We expect numForMajority to be less than 99
 	if numForMajority < 99 {
 		assert.Unreachable("Control Service: expected failure as we expect the numForMajority to be less than 99 sometimes", Details{"majorityNeeded": numForMajority})
@@ -306,13 +340,13 @@ func (s *ControlServer) hasMajority(count int) bool {
 
 func main() {
 	fmt.Print("Control Server booting...\n")
-	assert.Always("Control service: service started", true, nil)
+	assert.Always(true, "Control service: service started", nil)
 	portPtr := flag.Int("port", 8000, "Port on which to listen for requests")
 	vaultsPtr := flag.String("vaults", "", "Comma-separated list of vaults")
 	flag.Parse()
 	s := NewControlServer(*vaultsPtr)
 	lifecycle.SetupComplete()
-	assert.Always("Control service: setup complete", true, nil)
+	assert.Always(true, "Control service: setup complete", nil)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", *portPtr), s.mux)
 	if errors.Is(err, http.ErrServerClosed) {
 		assert.Unreachable("Control service: closed unexpectedly", Details{"error": err})
