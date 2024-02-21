@@ -20,25 +20,11 @@ RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
 RUN /go/bin/antithesis-go-instrumentor \
 /go/src/github.com/antithesis/glitch-grid \
 /go/src/github.com/antithesis/glitch-grid-instrumented
-
-RUN echo "---" && \
-ls -laR /go/src/github.com/antithesis/glitch-grid-instrumented && \
-cat /go/src/github.com/antithesis/glitch-grid/go.mod && \
-echo "--- go.sum:" && \
-cat /go/src/github.com/antithesis/glitch-grid/go.sum
-
-RUN echo "---"
     
 # Build control binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
 go mod tidy && \
 go build -o control control.go glitch-grid_antithesis_catalog.go
-
-RUN echo "---" && \
-ls -laR /go/src/github.com/antithesis/glitch-grid-instrumented && \
-cat /go/src/github.com/antithesis/glitch-grid-instrumented/customer/go.mod && \
-echo "--- go.sum:" && \
-cat /go/src/github.com/antithesis/glitch-grid-instrumented/customer/go.sum
 
 # Stage 2: lightweight "release"
 FROM docker.io/library/debian:bookworm-slim
