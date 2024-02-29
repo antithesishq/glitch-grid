@@ -1,0 +1,11 @@
+name: Zulip Notification Bot
+
+on:
+  push:
+
+permissions:
+  contents: read
+
+jobs:
+  post-to-zulip:
+     uses: antithesishq/.github/.github/workflows/zulip_notifier.yml@main
