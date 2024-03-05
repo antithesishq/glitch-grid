@@ -26,6 +26,7 @@ echo "done."
 # Emit a message we can look for to see that the test is starting.
 # This is useful for us to know when we've pivoted from setup to actual test so we don't
 # fuzz/test the setup phase.
+echo {\"setup_status\": \"complete\" } > "$ANTITHESIS_OUTPUT_DIR/sdk.json"
 echo "=== START TEST ==="
 
 # Go through and store numbers in our system. When our current number is a multiple of a certain value,
