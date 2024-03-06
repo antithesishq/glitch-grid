@@ -24,7 +24,7 @@ RUN /go/bin/antithesis-go-instrumentor \
 # Build control binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
 go mod tidy && \
-go build -o control control.go *_antithesis_catalog.go
+go build -o control *.go
 
 # Stage 2: lightweight "release"
 FROM docker.io/library/debian:bookworm-slim
