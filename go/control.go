@@ -6,7 +6,6 @@ import (
 	"flag"
 	"fmt"
 	"io"
-	"io/ioutil"
 	"net/http"
 	"os"
 	"strconv"
@@ -164,7 +163,7 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 		glog.Warningf("Error getting value from vault %s: invalid status code %v\n", url, resp.StatusCode)
 		return
 	}
-	body, readError := ioutil.ReadAll(resp.Body)
+	body, readError := io.ReadAll(resp.Body)
 	if readError != nil {
 		// Vault was supposedly-happy but did not return a value.
 		glog.Warningf("Error getting value from vault %s: error reading from body: %v\n", url, readError)
@@ -312,7 +311,6 @@ func (s *ControlServer) postValueToVaults(body []byte, resp map[string]bool) {
 				// This could include a failure to connect or a timeout during the update.
 				glog.Warningf("Error setting vault %s value to %s: %v", vault, string(body), err)
 			}
-
 		}(&m, vault, body, resp)
 	}
 	// Wait for all the connections to complete/timeout/fail.
