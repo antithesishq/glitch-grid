@@ -343,7 +343,7 @@ func main() {
 	vaultsPtr := flag.String("vaults", "", "Comma-separated list of vaults")
 	flag.Parse()
 	s := NewControlServer(*vaultsPtr)
-	lifecycle.SetupComplete()
+	lifecycle.SetupComplete(Details{"port": *portPtr, "vaults": *vaultsPtr})
 	assert.Always(true, "Control service: setup complete", nil)
 	err := http.ListenAndServe(fmt.Sprintf(":%d", *portPtr), s.mux)
 	if errors.Is(err, http.ErrServerClosed) {

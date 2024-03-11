@@ -9,8 +9,8 @@ COPY go.* vault.go /go/src/github.com/antithesis/glitch-grid
 # Download and install antithesis-go-instrumentor
 # Installs into $GOPATH/bin => /go/bin
 RUN cd /go/src/github.com/antithesis/glitch-grid && \
-go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.2.12 && \
-go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.2.12 && \
+go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@99d4b8a6fbecb5765aa88908267bd096ca43f9fe && \
+go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@99d4b8a6fbecb5765aa88908267bd096ca43f9fe && \
 go mod tidy
 
 # Create the destination output directory for the instrumented code.
