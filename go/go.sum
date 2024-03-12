@@ -1,5 +1,5 @@
-github.com/antithesishq/antithesis-sdk-go v0.2.12 h1:ecxbeSEm4izzQlgoSFFrmuDP7oOf1CN2c6/cRWg+jk4=
-github.com/antithesishq/antithesis-sdk-go v0.2.12/go.mod h1:IUpT2DPAKh6i/YhSbt6Gl3v2yvUZjmKncl7U91fup7E=
+github.com/antithesishq/antithesis-sdk-go v0.2.13-0.20240312132440-dffbda754bf8 h1:E4Ob6TATr31KRPJQV9DssRH5eknaZZwfwCg+jMiGY78=
+github.com/antithesishq/antithesis-sdk-go v0.2.13-0.20240312132440-dffbda754bf8/go.mod h1:IUpT2DPAKh6i/YhSbt6Gl3v2yvUZjmKncl7U91fup7E=
 github.com/golang/glog v1.2.0 h1:uCdmnmatrKCgMBlM4rMuJZWOkPDqdbZPnrMXDY4gI68=
 github.com/golang/glog v1.2.0/go.mod h1:6AhwSGph0fcJtXVM/PEHPqZlFeoLxhs7/t5UDAwmO+w=
 github.com/google/go-cmp v0.6.0 h1:ofyhxvXcZhMsU5ulbFiLKl/XBFqE1GSq7atu8tAmTRI=

@@ -4,4 +4,4 @@ go 1.20
 
 require github.com/golang/glog v1.2.0
 
-require github.com/antithesishq/antithesis-sdk-go v0.2.12
+require github.com/antithesishq/antithesis-sdk-go v0.2.13-0.20240312132440-dffbda754bf8
