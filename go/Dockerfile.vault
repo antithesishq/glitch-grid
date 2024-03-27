@@ -9,8 +9,8 @@ COPY go.* vault.go /go/src/github.com/antithesis/glitch-grid
 # Download and install antithesis-go-instrumentor
 # Installs into $GOPATH/bin => /go/bin
 RUN cd /go/src/github.com/antithesis/glitch-grid && \
-go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.2 && \
-go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.2 && \
+go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@ad3558ecf0476b929f55aa978e3919b4b48edcda && \
+go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@ad3558ecf0476b929f55aa978e3919b4b48edcda && \
 go mod tidy
 
 # Create the destination output directory for the instrumented code.
@@ -23,7 +23,7 @@ RUN /go/bin/antithesis-go-instrumentor \
 
 # Build vault binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
-go build -o vault *.go
+go build -o vault -tags=antithesis_sdk *.go
 
 # Stage 2: lightweight "release"
 FROM docker.io/library/debian:bookworm-slim
