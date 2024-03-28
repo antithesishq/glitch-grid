@@ -23,7 +23,6 @@ RUN /go/bin/antithesis-go-instrumentor \
     
 # Build control binary
 RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
-cat *_antithesis_catalog.go && \
 go build -o control -tags=antithesis_sdk *.go
 
 # Stage 2: lightweight "release"
