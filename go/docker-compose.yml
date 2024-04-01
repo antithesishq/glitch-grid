@@ -1,5 +1,7 @@
 version: '3.8'
 
+# Note to self: Replace image with build and point it to the dockerfile. (Look up details here)
+
 services:
   # Define three vaults which can provide some degree of replication/redundancy.
   vault1:
