@@ -1,12 +1,14 @@
 version: '3.8'
 
-# Note to self: Replace image with build and point it to the dockerfile. (Look up details here)
-
 services:
   # Define three vaults which can provide some degree of replication/redundancy.
   vault1:
     command: "--port 8001 --logtostderr --stderrthreshold=INFO"
-    image: demo-go-vault:${IMAGE_TAG}
+    #image: demo-go-vault:${IMAGE_TAG}
+    # Comment the following out in prod
+    build:
+      context: ../
+      dockerfile: ./vault/Dockerfile
     container_name: vault1
     ports:
       - "8001:8001"
@@ -16,7 +18,11 @@ services:
 
   vault2:
     command: "--port 8002 --logtostderr --stderrthreshold=INFO"
-    image: demo-go-vault:${IMAGE_TAG}
+    #image: demo-go-vault:${IMAGE_TAG}
+    # Comment the following out in prod
+    build:
+      context: ../
+      dockerfile: ./vault/Dockerfile
     container_name: vault2
     ports:
       - "8002:8002"
@@ -26,7 +32,11 @@ services:
 
   vault3:
     command: "--port 8003 --logtostderr --stderrthreshold=INFO"
-    image: demo-go-vault:${IMAGE_TAG}
+    #image: demo-go-vault:${IMAGE_TAG}
+    # Comment the following out in prod
+    build:
+      context: ../
+      dockerfile: ./vault/Dockerfile
     container_name: vault3
     ports:
       - "8003:8003"
@@ -38,7 +48,11 @@ services:
     # The address of the various vaults we've defined.
     # Define some extra logging for the controller.
     command: "--vaults 10.0.1.121:8001,10.0.1.122:8002,10.0.1.123:8003 --logtostderr --stderrthreshold=INFO"
-    image: demo-go-control:${IMAGE_TAG}
+    #image: demo-go-control:${IMAGE_TAG}
+    # Comment the following out in prod
+    build:
+      context: ../
+      dockerfile: ./control/Dockerfile
     container_name: control
     ports:
       - "8000:8000"
@@ -49,7 +63,9 @@ services:
   workload:
     # The address of the controller
     command: "10.0.1.120:8000"
-    image: demo-workload:${IMAGE_TAG}
+    #image: demo-workload:${IMAGE_TAG}
+    # Comment the following out in prod
+    build: ../workload/
     container_name: workload
     environment:
       - START_DELAY=15
