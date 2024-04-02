@@ -1,5 +1,7 @@
 # Top-level makefile. Go into each subdirectory and run make
-SUBDIRS := $(wildcard */.)
+# SUBDIRS := $(wildcard system_under_test/*/.)
+
+SUBDIRS := ./control/ ./vault/ ./workload/
 
 all: $(SUBDIRS)
 $(SUBDIRS):
