@@ -21,7 +21,7 @@ type VaultServer struct {
 	value int
 }
 
-// Create and return a new Control server instance.
+// Create and return a new Vault server instance.
 // Provide the port on which we will listen.
 // We store the port of the vault and not the controller, since the port is how we will
 // distinguish the vaults in the logs when run via `docker-compose up`
