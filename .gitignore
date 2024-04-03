@@ -10,8 +10,8 @@
 *.test
 
 # Our binaries
-control
-vault
+# control
+# vault
 
 # Output of the go coverage tool, specifically when used with LiteIDE
 *.out
