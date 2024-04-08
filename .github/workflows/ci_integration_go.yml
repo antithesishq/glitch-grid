@@ -67,7 +67,7 @@ jobs:
       uses: docker/build-push-action@v5
       with:
         context: ./workload
-        file: ./workload/Dockerfile.workload
+        file: ./workload/Dockerfile
         push: true
         tags: ${{ steps.meta-workload.outputs.tags }}
         labels: ${{ steps.meta-workload.outputs.labels }}
@@ -75,8 +75,8 @@ jobs:
       id: build-push-go-config
       uses: docker/build-push-action@v5
       with:
-        context: ./go
-        file: ./go/Dockerfile.config
+        context: ./go/config
+        file: ./go/config/Dockerfile
         push: true
         tags: ${{ steps.meta-go-config.outputs.tags }}
         labels: ${{ steps.meta-go-config.outputs.labels }}
@@ -84,8 +84,8 @@ jobs:
       id: build-push-go-control
       uses: docker/build-push-action@v5
       with:
-        context: ./go
-        file: ./go/Dockerfile.control
+        context: ./go/control
+        file: ./go/control/Dockerfile
         push: true
         tags: ${{ steps.meta-go-control.outputs.tags }}
         labels: ${{ steps.meta-go-control.outputs.labels }}
@@ -93,8 +93,8 @@ jobs:
       id: build-push-go-vault
       uses: docker/build-push-action@v5
       with:
-        context: ./go
-        file: ./go/Dockerfile.vault
+        context: ./go/vault
+        file: ./go/vault/Dockerfile
         push: true
         tags: ${{ steps.meta-go-vault.outputs.tags }}
         labels: ${{ steps.meta-go-vault.outputs.labels }}
