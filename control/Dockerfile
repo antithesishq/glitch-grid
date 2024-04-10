@@ -3,26 +3,26 @@ FROM docker.io/library/golang:1.20-bookworm AS builder
 LABEL maintainer="Antithesis <support@antithesis.com>"
 
 # Add source code
-RUN mkdir -p /go/src/github.com/antithesis/glitch-grid
-COPY go.* control.go /go/src/github.com/antithesis/glitch-grid
+RUN mkdir -p /go/src/antithesis/control
+COPY go.sum go.mod *.go /go/src/antithesis/control/
 
 # Download and install antithesis-go-instrumentor
 # Installs into $GOPATH/bin => /go/bin
-RUN cd /go/src/github.com/antithesis/glitch-grid && \
-go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.4 && \
+RUN cd /go/src/antithesis/control && \
 go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.4 && \
 go mod tidy
 
 # Create the destination output directory for the instrumented code.
-RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
+RUN mkdir -p /go/src/antithesis/control-instrumented
 
 # Perform instrumentation
 RUN /go/bin/antithesis-go-instrumentor \
-/go/src/github.com/antithesis/glitch-grid \
-/go/src/github.com/antithesis/glitch-grid-instrumented
+/go/src/antithesis/control \
+/go/src/antithesis/control-instrumented
     
 # Build control binary
-RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
+RUN cd /go/src/antithesis/control-instrumented/customer && \
+cat *_antithesis_catalog.go && \
 go build -o control *.go
 
 # Stage 2: lightweight "release"
@@ -31,8 +31,8 @@ LABEL maintainer="Antithesis <support@antithesis.com>"
 
 # Copy the instrumented binary, and symbols from the build image.
 COPY --from=builder \
-/go/src/github.com/antithesis/glitch-grid-instrumented/customer/control /bin/
+/go/src/antithesis/control-instrumented/customer/control /bin/
 RUN mkdir -p /symbols
-COPY --from=builder /go/src/github.com/antithesis/glitch-grid-instrumented/symbols /symbols/
+COPY --from=builder /go/src/antithesis/control-instrumented/symbols /symbols/
 
 ENTRYPOINT [ "/bin/control" ]

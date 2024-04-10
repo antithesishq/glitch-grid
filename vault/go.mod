@@ -1,4 +1,4 @@
-module antithesis.com/go/glitch-grid
+module antithesis.com/glitch-grid-vault
 
 go 1.20
 

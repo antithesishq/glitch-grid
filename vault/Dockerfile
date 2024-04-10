@@ -3,26 +3,25 @@ FROM docker.io/library/golang:1.20-bookworm AS builder
 LABEL maintainer="Antithesis <support@antithesis.com>"
 
 # Add source code
-RUN mkdir -p /go/src/github.com/antithesis/glitch-grid
-COPY go.* vault.go /go/src/github.com/antithesis/glitch-grid
+RUN mkdir -p /go/src/antithesis/vault
+COPY go.sum go.mod *.go /go/src/antithesis/vault/
 
 # Download and install antithesis-go-instrumentor
 # Installs into $GOPATH/bin => /go/bin
-RUN cd /go/src/github.com/antithesis/glitch-grid && \
-go get github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.4 && \
+RUN cd /go/src/antithesis/vault && \
 go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.4 && \
 go mod tidy
 
 # Create the destination output directory for the instrumented code.
-RUN mkdir -p /go/src/github.com/antithesis/glitch-grid-instrumented
+RUN mkdir -p /go/src/antithesis/vault-instrumented
 
 # Perform instrumentation
 RUN /go/bin/antithesis-go-instrumentor \
-/go/src/github.com/antithesis/glitch-grid \
-/go/src/github.com/antithesis/glitch-grid-instrumented
+/go/src/antithesis/vault \
+/go/src/antithesis/vault-instrumented
 
 # Build vault binary
-RUN cd /go/src/github.com/antithesis/glitch-grid-instrumented/customer && \
+RUN cd /go/src/antithesis/vault-instrumented/customer && \
 go build -o vault *.go
 
 # Stage 2: lightweight "release"
@@ -31,8 +30,8 @@ LABEL maintainer="Antithesis <support@antithesis.com>"
 
 # Copy the instrumented binary, and symbols from the build image.
 COPY --from=builder \
-/go/src/github.com/antithesis/glitch-grid-instrumented/customer/vault /bin/
+/go/src/antithesis/vault-instrumented/customer/vault /bin/
 RUN mkdir -p /symbols
-COPY --from=builder /go/src/github.com/antithesis/glitch-grid-instrumented/symbols /symbols/
+COPY --from=builder /go/src/antithesis/vault-instrumented/symbols /symbols/
 
 ENTRYPOINT [ "/bin/vault" ]

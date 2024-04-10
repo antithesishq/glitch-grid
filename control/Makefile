@@ -5,25 +5,26 @@ else
 endif
 
 GIT_HASH ?= $(shell git log --format="%h" -n 1)
+LANGUAGE = go
 _BUILD_ARGS_TAG ?= ${GIT_HASH}
 _BUILD_ARGS_RELEASE_TAG ?= latest
 _BUILD_ARGS_DOCKERFILE ?= Dockerfile
 _BUILD_ARGS_APPLICATION ?= __does_not_exist__
 
-all: build_workload
+all: build_control
 
 .PHONY: all
 
 _builder:
-	$(CMD) build --tag demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG} -f ${_BUILD_ARGS_DOCKERFILE} .
+	$(CMD) build --tag ${LANGUAGE}-demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG} -f ${_BUILD_ARGS_DOCKERFILE} .
  
 _pusher:
-	$(CMD) push demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG}
+	$(CMD) push ${LANGUAGE}-demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG}
  
 _releaser:
-	$(CMD) pull demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG}
-	$(CMD) tag  demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG} ${APPLICATION_NAME}:latest
-	$(CMD) push demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_RELEASE_TAG}
+	$(CMD) pull ${LANGUAGE}-demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG}
+	$(CMD) tag  ${LANGUAGE}-demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_TAG} ${APPLICATION_NAME}:latest
+	$(CMD) push ${LANGUAGE}-demo-${_BUILD_ARGS_APPLICATION}:${_BUILD_ARGS_RELEASE_TAG}
 
 build_%:
 	$(MAKE) _builder \

@@ -2,11 +2,11 @@
 
 # How long to wait for everything to come up before starting the test?
 START_DELAY=${START_DELAY:-10}
-# How logn to wait after the final write to check if the system gets into a consistent state?
+# How long to wait after the final write to check if the system gets into a consistent state?
 FINAL_DELAY=${FINAL_DELAY:-5}
 # How many steps (i.e., numbers) should we try and write to the system during this test?
 NUM_STEPS=${NUM_STEPS:-100}
-# What is the maximum amount the counter should jump up each step?
+# What is the maximum amount the counter should increment per step?
 MAX_STEP_SIZE=${MAX_STEP_SIZE:-5}
 # Check the consistency of the system when the counter is a multiple of what number?
 CHECK_WHEN_MULTIPLE_OF=${CHECK_WHEN_MULTIPLE_OF:-5}

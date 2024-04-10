@@ -11,9 +11,7 @@ _BUILD_ARGS_RELEASE_TAG ?= latest
 _BUILD_ARGS_DOCKERFILE ?= Dockerfile
 _BUILD_ARGS_APPLICATION ?= __does_not_exist__
 
-all: all_build
-
-all_build: build_config build_control build_vault
+all: build_vault
 
 .PHONY: all
 
@@ -31,7 +29,7 @@ _releaser:
 build_%:
 	$(MAKE) _builder \
 		-e _BUILD_ARGS_TAG="$*-${GIT_HASH}" \
-		-e _BUILD_ARGS_DOCKERFILE="Dockerfile.$*" \
+		-e _BUILD_ARGS_DOCKERFILE="Dockerfile" \
 		-e _BUILD_ARGS_APPLICATION="$*"
  
 push_%:
