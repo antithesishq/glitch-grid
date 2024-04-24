@@ -1,0 +1,56 @@
+name: Run Antithesis
+
+on:
+  push:
+    branches:
+      - master  # Change this to desired branch
+
+env: 
+  REGISTRY: us-central1-docker.pkg.dev
+  REPOSITORY: molten-verve-216720/<tenant_name>-repository
+  SUT_NAME: <IMAGE_NAME>
+  SUT_TAG: <TAG>
+  CONFIG_NAME: config
+  CONFIG_TAG: latest
+
+jobs:
+  antithesis:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Login to GAR
+      uses: docker/login-action@v3
+      with:
+        registry: ${{ env.REGISTRY }}
+        username: _json_key
+        password: ${{ secrets.ANTITHESIS_GAR_JSON_KEY }}
+    
+    - name: Build <SUT>
+      id: build-image
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY/$SUT_NAME:$SUT_TAG -f ./Dockerfile.antithesis .
+        echo "name=image::$REGISTRY/$REPOSITORY/$SUT_NAME:$SUT_TAG" >> $GITHUB_OUTPUT
+
+    - name: Build config
+      id: build-config-image
+      run: |
+        docker build -t $REGISTRY/$REPOSITORY/$CONFIG_NAME:$CONFIG_TAG -f ./Dockerfile.config.antithesis .
+        echo "name=image::$REGISTRY/$REPOSITORY/$CONFIG_NAME:$CONFIG_TAG" >> $GITHUB_OUTPUT
+
+    - name: Publish images
+      run: |
+        docker push ${REGISTRY}/${REPOSITORY}/${SUT_NAME}:${SUT_TAG}
+        docker push ${REGISTRY}/${REPOSITORY}/${CONFIG_NAME}:${CONFIG_TAG}
+
+    # Run Antithesis Tests
+    - name: Run Antithesis Tests
+      uses: antithesishq/antithesis-trigger-action@main
+      with:
+        notebook_name: <notebook_name>
+        tenant: <tenant_name>
+        username: ${{ secrets.ANTITHESIS_USERNAME }}
+        password: ${{ secrets.ANTITHESIS_PASSWORD }}
+        github_token: ${{ secrets.GH_PAT }}
