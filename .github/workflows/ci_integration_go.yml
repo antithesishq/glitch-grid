@@ -108,6 +108,6 @@ jobs:
         username: ${{ secrets.ANTITHESIS_USERNAME }}
         password: ${{ secrets.ANTITHESIS_PASSWORD }}
         github_token: ${{ secrets.GH_PAT }}
-        config_image: demo-go-config@${{ steps.build-push-go-config.outputs.digest }};
-        images: demo-workload@${{ steps.build-push-go-workload.outputs.digest }};demo-go-control@${{ steps.build-push-go-control.outputs.digest }};demo-go-vault@${{ steps.build-push-go-vault.outputs.digest }};
-        description: "The CI run for commit # ${GITHUB_SHA:0:7}"
+        config_image: docker.io/antithesishq/demo-go-config@${{ steps.build-push-go-config.outputs.digest }};
+        images: docker.io/antithesishq/demo-workload@${{ steps.build-push-go-workload.outputs.digest }};docker.io/antithesishq/demo-go-control@${{ steps.build-push-go-control.outputs.digest }};docker.io/antithesishq/demo-go-vault@${{ steps.build-push-go-vault.outputs.digest }};
+        description: "The CI run for commit # ${{ github.ref_name }}"
