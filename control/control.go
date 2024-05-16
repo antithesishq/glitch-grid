@@ -55,6 +55,9 @@ func NewControlServer(vaults string) *ControlServer {
 
 // Handle GET and POST requests to the root path.
 func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
+
+	lifecycle.SendEvent("Handle called.", Details{"method": r.Method})
+
 	if r.URL.Path != "/" {
 		assert.AlwaysOrUnreachable(true, "Control service: received a non-root request paths & handled that correctly.", Details{"path": r.URL.Path})
 		// We only support operations on the root path.
