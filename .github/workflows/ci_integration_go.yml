@@ -2,6 +2,12 @@ name: Continous Integration (Go Services)
 
 on: 
    workflow_dispatch:
+     inputs:
+       test:
+        description: 'Test name'
+        required: false
+        default: ''
+        type: string
    pull_request:
    schedule:
      - cron: "5 1 * * *"
@@ -102,7 +108,7 @@ jobs:
 
     # Run Antithesis Tests
     - name: Run Antithesis Tests
-      uses: antithesishq/antithesis-trigger-action@main
+      uses: antithesishq/antithesis-trigger-action@support-multiple-tests
       with:
         notebook_name: demo_go
         tenant: demo
@@ -112,6 +118,7 @@ jobs:
         config_image: demo-go-config@${{ steps.build-push-go-config.outputs.digest }}
         images: docker.io/antithesishq/demo-workload@${{ steps.build-push-go-workload.outputs.digest }};docker.io/antithesishq/demo-go-control@${{ steps.build-push-go-control.outputs.digest }};demo-go-vault@${{ steps.build-push-go-vault.outputs.digest }};
         description: "The CI run for ref - ${{ github.ref_name }} commit # ${{ github.sha }}"
+        test_name:  ${{ inputs.test }}
         additional_parameters: |-
           custom.repo_name=${{github.repository}}
           custom.action_name = ${{github.action}}
