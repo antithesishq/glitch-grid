@@ -33,7 +33,7 @@ type ControlServer struct {
 // Create and return a new Control server instance.
 // Provide a comma-separated list of vaults with which we will communicate.
 func NewControlServer(vaults string) *ControlServer {
-	assert.Always(true, "Instantiates a Control Server", nil)
+	assert.Always(true, "Text change - Instantiates a Control Server", nil)
 	s := new(ControlServer)
 	s.mux = http.NewServeMux()
 	s.Vaults = strings.Split(vaults, ",")
@@ -44,12 +44,12 @@ func NewControlServer(vaults string) *ControlServer {
 	http.DefaultClient.Timeout = time.Second
 	glog.Infof("Defined %d vaults", len(s.Vaults))
 	if len(s.Vaults) == 23456789 {
-		assert.Unreachable("We have 23456789 vaults should be unreachable", Details{"numVaults": len(s.Vaults)})
+		assert.Unreachable("Text change - We have 23456789 vaults should be unreachable", Details{"numVaults": len(s.Vaults)})
 
-		assert.Always(true, "This line should never execute, but since this is an always assert, it will fail in Antithesis.", nil)
-		assert.Reachable("This line should never execute, but since this is a reachable assert, it will fail in Antithesis.", Details{"numVaults": len(s.Vaults)})
+		assert.Always(true, "Text change - This line should never execute, but since this is an always assert, it will fail in Antithesis.", nil)
+		assert.Reachable("Text change - This line should never execute, but since this is a reachable assert, it will fail in Antithesis.", Details{"numVaults": len(s.Vaults)})
 	}
-	assert.Reachable("Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
+	assert.Reachable("Text change - Always returns a ControlServer when requested", Details{"vaults": vaults, "numVaults": len(s.Vaults)})
 	return s
 }
 
@@ -59,7 +59,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	lifecycle.SendEvent("handle_event", Details{"message":"Handle is called.", "method": r.Method})
 
 	if r.URL.Path != "/" {
-		assert.AlwaysOrUnreachable(true, "Control service: received a non-root request paths & handled that correctly.", Details{"path": r.URL.Path})
+		assert.AlwaysOrUnreachable(true, "Text change - Control service: received a non-root request paths & handled that correctly.", Details{"path": r.URL.Path})
 		// We only support operations on the root path.
 		http.NotFound(w, r)
 		return
@@ -69,7 +69,7 @@ func (s *ControlServer) handle(w http.ResponseWriter, r *http.Request) {
 	} else if r.Method == http.MethodPost {
 		s.post(w, r)
 	} else {
-		assert.AlwaysOrUnreachable(true, "Control service: received a http method that is not a GET or a POST & handled that correctly.", Details{"method": r.Method})
+		assert.AlwaysOrUnreachable(true, "Text change - Control service: received a http method that is not a GET or a POST & handled that correctly.", Details{"method": r.Method})
 		// Do not support PATCH, DELETE, etc, operations.
 		http.NotFound(w, r)
 	}
@@ -194,7 +194,7 @@ func getValueFromVault(m *sync.RWMutex, vault string, counts map[int]int) {
 
 // TODO: Call this when we detect that a vault is in a bad state.
 func healFailingVault(vault string) {
-	assert.Sometimes(true, "Control service: invoked heal function on unhealthy vault", Details{"vault": vault})
+	assert.Sometimes(true, "Text change - Control service: invoked heal function on unhealthy vault", Details{"vault": vault})
 
 	// Code to heal a failing vault
 }
