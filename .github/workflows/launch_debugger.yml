@@ -18,6 +18,11 @@ on:
         required: true
         default: ''
         type: number
+       email:
+        description: 'email'
+        required: true
+        default: ''
+        type: string
 
 jobs:
   antithesis:
@@ -30,23 +35,17 @@ jobs:
     steps:
     - uses: actions/checkout@v4
 
-    - uses: "actions/github-script@v6"
+    # Start Antithesis Debugging
+    - name: Start Antithesis Debugging
+      uses: antithesishq/antithesis-trigger-action@main
       with:
-        script: |
-          console.log('${{ inputs.vtime }}')
-          console.log('${{ toJSON(github) }}')
-
-    # # Start Antithesis Debugging
-    # - name: Start Antithesis Debugging
-    #   uses: antithesishq/antithesis-trigger-action@main
-    #   with:
-    #     notebook_name: launch_debugging 
-    #     tenant: demo
-    #     username: ${{ secrets.ANTITHESIS_USERNAME }}
-    #     password: ${{ secrets.ANTITHESIS_PASSWORD }}
-    #     github_token: ${{ secrets.GH_PAT }}
-    #     email_recipients: ${{}}
-    #     additional_parameters: |-
-    #       antithesis.debugging.session_id=${{}}
-    #       antithesis.debugging.input_hash = ${{}}
-    #       antithesis.debugging.vtime = ${{}}
+        notebook_name: launch_debugging 
+        tenant: demo
+        username: ${{ secrets.ANTITHESIS_USERNAME }}
+        password: ${{ secrets.ANTITHESIS_PASSWORD }}
+        github_token: ${{ secrets.GH_PAT }}
+        email_recipients: ${{ inputs.email }}
+        additional_parameters: |-
+          antithesis.debugging.session_id=${{ inputs.session }}
+          antithesis.debugging.input_hash = ${{ inputs.input_hash }}
+          antithesis.debugging.vtime = ${{ inputs.vtime }}
