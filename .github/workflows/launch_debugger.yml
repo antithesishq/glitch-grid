@@ -34,7 +34,6 @@ jobs:
       with:
         script: |
           console.log('${{ inputs.vtime }}')
-          console.log('${{ toJSON(context) }}')
           console.log('${{ toJSON(github) }}')
 
     # # Start Antithesis Debugging
