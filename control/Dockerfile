@@ -16,7 +16,7 @@ go mod tidy
 RUN mkdir -p /go/src/antithesis/control-instrumented
 
 # Perform instrumentation
-RUN /go/bin/antithesis-go-instrumentor \
+RUN /go/bin/antithesis-go-instrumentor --instrumentor_version v0.3.6 \
 /go/src/antithesis/control \
 /go/src/antithesis/control-instrumented
     
