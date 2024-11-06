@@ -35,4 +35,6 @@ COPY --from=builder \
 RUN mkdir -p /symbols
 COPY --from=builder /go/src/antithesis/control-instrumented/symbols /symbols/
 
+COPY --from=builder /go/src/antithesis/ /src/
+
 ENTRYPOINT [ "/bin/control" ]
