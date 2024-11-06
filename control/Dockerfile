@@ -9,7 +9,7 @@ COPY go.sum go.mod *.go /go/src/antithesis/control/
 # Download and install antithesis-go-instrumentor
 # Installs into $GOPATH/bin => /go/bin
 RUN cd /go/src/antithesis/control && \
-go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@v0.3.6 && \
+go install github.com/antithesishq/antithesis-sdk-go/tools/antithesis-go-instrumentor@46403e51151e5ac9078678d18f26673013c748af && \
 go mod tidy
 
 # Create the destination output directory for the instrumented code.
