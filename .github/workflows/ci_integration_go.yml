@@ -108,7 +108,7 @@ jobs:
 
     # Run Antithesis Tests
     - name: Run Antithesis Tests
-      uses: antithesishq/antithesis-trigger-action@main
+      uses: antithesishq/antithesis-trigger-action@verbose-logging
       with:
         notebook_name: demo_go
         tenant: demo
