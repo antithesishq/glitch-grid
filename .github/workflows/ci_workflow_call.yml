@@ -4,24 +4,24 @@ on:
   workflow_dispatch:
 
 jobs:
-  build_and_test:
-    runs-on: ubuntu-latest
 
+  debug:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Dump GitHub context
+        env:
+          GITHUB_CONTEXT: ${{ toJSON(github) }}
+        run: echo "$GITHUB_CONTEXT"
+
+      - name: Dump Runner context
+        env:
+          RUNNER_CONTEXT: ${{ toJSON(runner) }}
+        run: echo "$RUNNER_CONTEXT"
+
+  build_and_test:
     permissions:
       contents: read
       packages: write
-
-    steps:
-    - name: Dump GitHub context
-      env:
-        GITHUB_CONTEXT: ${{ toJSON(github) }}
-      run: echo "$GITHUB_CONTEXT"
-
-    - name: Dump Runner context
-      env:
-        RUNNER_CONTEXT: ${{ toJSON(runner) }}
-      run: echo "$RUNNER_CONTEXT"
-
-    - uses: ./.github/workflows/ci_integration_go.yml
-      secrets: inherit
+    uses: ./.github/workflows/ci_integration_go.yml
+    secrets: inherit
 
