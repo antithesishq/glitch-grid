@@ -4,6 +4,10 @@ on:
   workflow_dispatch:
 
 jobs:
+
   build_and_test:
+    permissions:
+      contents: read
+      packages: write
     uses: ./.github/workflows/ci_integration_go.yml
     secrets: inherit
