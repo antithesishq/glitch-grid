@@ -5,5 +5,5 @@ on:
 
 jobs:
   build_and_test:
-    uses: .github/workflows/ci_integration_go.yml
+    uses: .github/workflows/ci_integration_go.yml@main
     secrets: inherit
