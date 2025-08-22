@@ -1,0 +1,9 @@
+name: CI via workflow_call
+
+on:
+  workflow_dispatch:
+
+jobs:
+  build_and_test:
+    uses: ./.github/workflows/ci_integration_go.yaml
+    secrets: inherit

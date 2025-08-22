@@ -9,6 +9,7 @@ on:
         default: ''
         type: string
    pull_request:
+   workflow_call:
    schedule:
      - cron: "5 1 * * *"
 
