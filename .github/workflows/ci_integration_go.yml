@@ -109,7 +109,7 @@ jobs:
 
     # Run Antithesis Tests
     - name: Run Antithesis Tests
-      uses: antithesishq/antithesis-trigger-action@main
+      uses: antithesishq/antithesis-trigger-action@feature-use-more-params
       with:
         notebook_name: demo_go
         tenant: demo
