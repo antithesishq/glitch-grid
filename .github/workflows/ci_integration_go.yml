@@ -124,4 +124,5 @@ jobs:
           custom.repo_name=${{github.repository}}
           custom.action_name = ${{github.action}}
           custom.actor = ${{ github.actor }}
+          test_param = "testing"
 
