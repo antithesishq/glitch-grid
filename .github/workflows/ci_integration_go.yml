@@ -15,6 +15,7 @@ on:
 
 jobs:
   antithesis:
+    environment: "testing: run on honey-whale"
     runs-on: ubuntu-latest
 
     permissions:
