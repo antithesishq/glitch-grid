@@ -11,9 +11,7 @@ on:
    pull_request:
    workflow_call:
    schedule:
-    # FIXME: For testing, this is scheduled at every XX:05!
-    # Change it back ASAP to "5 1 * * *" (at every 01:05).
-     - cron: "*/5 * * * *"
+    - cron: "5 1 * * *"
 
 jobs:
   antithesis:
