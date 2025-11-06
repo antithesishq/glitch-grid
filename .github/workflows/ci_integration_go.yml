@@ -119,7 +119,6 @@ jobs:
         test_name:  ${{ inputs.test }}
         team: "Antithesis Demo devs"
         description: "The CI run for ref - ${{ github.ref_name }} commit # ${{ github.sha }}"
-        cron_schedule: ${{ github.event.schedule }}
 
         # information needed to start a run
         tenant: demo
