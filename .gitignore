@@ -178,3 +178,4 @@ cython_debug/
 
 # Random but common clutter
 .DS_Store
+.vscode/settings.json

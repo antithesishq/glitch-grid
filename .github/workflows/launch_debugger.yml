@@ -37,6 +37,7 @@ jobs:
 
     # Start Antithesis Debugging
     - name: Start Antithesis Debugging
+      # FIXME: change this back to @main
       uses: antithesishq/antithesis-trigger-action@feature-use-more-params
       with:
         notebook_name: launch_debugging 

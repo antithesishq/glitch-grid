@@ -11,11 +11,12 @@ on:
    pull_request:
    workflow_call:
    schedule:
-     - cron: "5 1 * * *"
+    # FIXME: For testing, this is scheduled at every XX:05!
+    # Change it back ASAP to "5 1 * * *" (at every 01:05).
+     - cron: "*/5 * * * *"
 
 jobs:
   antithesis:
-    environment: "testing: run on honey-whale"
     runs-on: ubuntu-latest
 
     permissions:
@@ -110,6 +111,7 @@ jobs:
 
     # Run Antithesis Tests
     - name: Run Antithesis Tests
+      # FIXME: change this back to @main
       uses: antithesishq/antithesis-trigger-action@feature-use-more-params
       with:
         # metadata about what you're running
@@ -120,7 +122,7 @@ jobs:
         cron_schedule: ${{ github.event.schedule }}
 
         # information needed to start a run
-        tenant: honey-whale
+        tenant: demo
         username: ${{ secrets.ANTITHESIS_USERNAME }}
         password: ${{ secrets.ANTITHESIS_PASSWORD }}
         github_token: ${{ secrets.GH_PAT }}
@@ -128,4 +130,7 @@ jobs:
         config_image: demo-go-config@${{ steps.build-push-go-config.outputs.digest }}
         images: docker.io/antithesishq/demo-workload@${{ steps.build-push-go-workload.outputs.digest }};docker.io/antithesishq/demo-go-control@${{ steps.build-push-go-control.outputs.digest }};demo-go-vault@${{ steps.build-push-go-vault.outputs.digest }};
         additional_parameters: |-
+          custom.repo_name = ${{github.repository}}
+          custom.action_name = ${{github.action}}
+          custom.actor = ${{ github.actor }}
           custom.param_name = "Contact us to set up extra parameters."
