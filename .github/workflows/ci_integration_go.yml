@@ -11,7 +11,9 @@ on:
    pull_request:
    workflow_call:
    schedule:
-     - cron: "5 1 * * *"
+    # FIXME: For testing, this is scheduled at every XX:05!
+    # Change it back ASAP to "5 1 * * *" (at every 01:05).
+     - cron: "*/5 * * * *"
 
 jobs:
   antithesis:
@@ -109,19 +111,26 @@ jobs:
 
     # Run Antithesis Tests
     - name: Run Antithesis Tests
-      uses: antithesishq/antithesis-trigger-action@main
+      # FIXME: change this back to @main
+      uses: antithesishq/antithesis-trigger-action@feature-use-more-params
       with:
-        notebook_name: demo_go
+        # metadata about what you're running
+        system_name: "Glitch Grid"
+        test_name:  ${{ inputs.test }}
+        team: "Antithesis Demo devs"
+        description: "The CI run for ref - ${{ github.ref_name }} commit # ${{ github.sha }}"
+        cron_schedule: ${{ github.event.schedule }}
+
+        # information needed to start a run
         tenant: demo
         username: ${{ secrets.ANTITHESIS_USERNAME }}
         password: ${{ secrets.ANTITHESIS_PASSWORD }}
         github_token: ${{ secrets.GH_PAT }}
+        notebook_name: demo_go
         config_image: demo-go-config@${{ steps.build-push-go-config.outputs.digest }}
         images: docker.io/antithesishq/demo-workload@${{ steps.build-push-go-workload.outputs.digest }};docker.io/antithesishq/demo-go-control@${{ steps.build-push-go-control.outputs.digest }};demo-go-vault@${{ steps.build-push-go-vault.outputs.digest }};
-        description: "The CI run for ref - ${{ github.ref_name }} commit # ${{ github.sha }}"
-        test_name:  ${{ inputs.test }}
         additional_parameters: |-
-          custom.repo_name=${{github.repository}}
+          custom.repo_name = ${{github.repository}}
           custom.action_name = ${{github.action}}
           custom.actor = ${{ github.actor }}
-
+          custom.param_name = "Contact us to set up extra parameters."
