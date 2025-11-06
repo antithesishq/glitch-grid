@@ -111,8 +111,7 @@ jobs:
 
     # Run Antithesis Tests
     - name: Run Antithesis Tests
-      # FIXME: change this back to @main
-      uses: antithesishq/antithesis-trigger-action@feature-use-more-params
+      uses: antithesishq/antithesis-trigger-action@main
       with:
         # metadata about what you're running
         system_name: "Glitch Grid"
