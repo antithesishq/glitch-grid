@@ -118,7 +118,7 @@ jobs:
         description: "The CI run for ref - ${{ github.ref_name }} commit # ${{ github.sha }}"
 
         # information needed to start a run
-        tenant: demo
+        tenant: honey-whale
         username: ${{ secrets.ANTITHESIS_USERNAME }}
         password: ${{ secrets.ANTITHESIS_PASSWORD }}
         github_token: ${{ secrets.GH_PAT }}
