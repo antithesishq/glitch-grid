@@ -126,6 +126,9 @@ jobs:
         config_image: demo-go-config@${{ steps.build-push-go-config.outputs.digest }}
         images: docker.io/antithesishq/demo-workload@${{ steps.build-push-go-workload.outputs.digest }};docker.io/antithesishq/demo-go-control@${{ steps.build-push-go-control.outputs.digest }};demo-go-vault@${{ steps.build-push-go-vault.outputs.digest }};
         additional_parameters: |-
+          attrs.foo = "bar"
+          attrs.foo_id = 2
+          attr.bar = "this parameter should be discarded on our end"
           custom.repo_name = ${{github.repository}}
           custom.action_name = ${{github.action}}
           custom.actor = ${{ github.actor }}
