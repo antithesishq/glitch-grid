@@ -74,7 +74,7 @@ func (s *VaultServer) post(w http.ResponseWriter, r *http.Request) {
 	if n >= 0 && e == nil {
 		// We only store positive values.
 		if n < s.value {
-			glog.Warningf("THIS SHOULD NEVER HAPPEN: Counter value regressed from %d to %d", s.value, n)
+			glog.Warningf("YOUHANA - THIS SHOULD NEVER HAPPEN: Counter value regressed from %d to %d", s.value, n)
 		}
 		s.value = n
 		glog.Infof("Set Vault :%d Counter %d", s.port, s.value)
